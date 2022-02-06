@@ -1,8 +1,4 @@
-
-# Loading libraries -------------------------------------------------------
-
-source("1_libraries.r")
-
+# source("0_run.r")
 
 # Reading data source -----------------------------------------------------
 
@@ -27,4 +23,19 @@ speech_2018 <- speech_2018 %>%
 speech_2020 <- paste(speech_2020, collapse = " ")
 speech_2020 <- paste(speech_2020, collapse = " ")
 speech_2020 <- paste(speech_2020, collapse = " ")
+
+
+# Preparing stopwords -----------------------------------------------------
+
+stopwords_es <- read_csv("input/vacias.txt", col_names = TRUE)
+# Stopwords in vacias.txt have been taken from:
+# https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt
+my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", "dado", 
+                                   "dar", "debido", "decir", "acerca", "pesos",
+                                   "fin", "ser", "respecto", "debe", "gran", "tiene",
+                                   "tienen", "puede", "ir", "hace"))
+more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", "período", 
+                                     "cuenta", "informe", "viii", "monto", "diariamente",
+                                     "diferentes", "impacta", "enfocar",
+                                     "circuito", "sanitarias"))
 
