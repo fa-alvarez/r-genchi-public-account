@@ -1,0 +1,29 @@
+---
+title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2019**"
+author: "Fabián Álvarez / Roberto Rodríguez"
+date: "09-11-2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r 1_libraries, include=FALSE}
+source("1_libraries.r")
+```
+
+# Introducción
+
+Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retro alimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
+
+Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019 y 2020 (gestión 2017, 2018 y 2019, respectivamente).
+
+# Lectura y limpieza de archivos
+
+```{r source, message=FALSE}
+source("2_source.r")
+```
+
+Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  Luego, eliminamos las primeras y últimas páginas, aquellas que generalmente no contienen información útil para el análisis como portadas o imágenes de cierre de informe.  
