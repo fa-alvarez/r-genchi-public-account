@@ -22,8 +22,26 @@ Para este análisis se aplican técnicas de análisis de texto en R a las cuenta
 
 # Lectura y limpieza de archivos
 
-```{r source, message=FALSE}
-source("2_source.r")
+Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  
+
+```{r 2_source_reading}
+speech_2020 <- pdf_text("input/discurso_2020_2019.pdf")
+speech_2019 <- pdf_text("input/discurso_2019_2018.pdf")
+speech_2018 <- pdf_text("input/discurso_2018_2017.pdf")
 ```
 
-Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  Luego, eliminamos las primeras y últimas páginas, aquellas que generalmente no contienen información útil para el análisis como portadas o imágenes de cierre de informe.  
+Luego, eliminamos las primeras páginas de los discursos ya que contienen elementos que no forman parte de la cuenta pública. Lo mismo hacemos para las últimas páginas; en ambos casos, solo cuando corresponda.
+
+```{r 2_source_removing_pages}
+speech_2020 <- speech_2020 %>%
+  .[-1:-2] %>% 
+  .[-53:-56]
+speech_2019 <- speech_2019 %>% 
+  .[-1:-2]
+speech_2018 <- speech_2018 %>% 
+  .[-1]
+```
+
+
+
+
