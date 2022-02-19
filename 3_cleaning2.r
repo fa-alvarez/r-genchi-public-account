@@ -1,4 +1,3 @@
-# source("0_run.r")
 
 # Speech 2019 (management 2018) Removing regular expressions --------------
 

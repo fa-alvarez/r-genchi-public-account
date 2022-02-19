@@ -1,4 +1,3 @@
-# source("0_run.r")
 
 # Reading data source -----------------------------------------------------
 
@@ -21,8 +20,8 @@ speech_2018 <- speech_2018 %>%
 # Concatenating objects for each speech ------------------------------------
 
 speech_2020 <- paste(speech_2020, collapse = " ")
-speech_2020 <- paste(speech_2020, collapse = " ")
-speech_2020 <- paste(speech_2020, collapse = " ")
+speech_2019 <- paste(speech_2019, collapse = " ")
+speech_2018 <- paste(speech_2018, collapse = " ")
 
 
 # Preparing stopwords -----------------------------------------------------
