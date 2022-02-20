@@ -1,3 +1,4 @@
+# source("1_libraries.r")
 
 # Reading data source -----------------------------------------------------
 
@@ -36,5 +37,5 @@ my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", 
 more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", "período", 
                                      "cuenta", "informe", "viii", "monto", "diariamente",
                                      "diferentes", "impacta", "enfocar",
-                                     "circuito", "sanitarias"))
+                                     "circuito", "sanitarias", "deberá"))
 
