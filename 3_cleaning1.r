@@ -1,3 +1,5 @@
+# source("1_libraries.r")
+# source("2_source.r")
 
 # Speech 2020 (management 2019) Removing regular expressions --------------
 
