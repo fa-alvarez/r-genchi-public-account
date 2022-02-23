@@ -210,6 +210,8 @@ head(frequencies_2018)
 
 # Análisis por palabra
 
+Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF.  Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos.
+
 ## Frecuencias
 
 Graficamos las 10 palabras más frecuentes de cada discurso.
@@ -250,4 +252,17 @@ pic_2018 <- frequencies_2018 %>%
 
 ## Análisis TF-IDF
 
+Unimos las frecuencias en un solo data frame, identificando palabras y frecuencias con sus respectivos discursos.
+
+```{r 4_one-word_analysis_TF-IDF}
+frequencies_2020 <- frequencies_2020 %>% 
+  mutate(discurso = "C.P.P. 2020", .before = palabra) 
+frequencies_2019 <- frequencies_2019 %>% 
+  mutate(discurso = "C.P.P. 2019", .before = palabra) 
+frequencies_2018 <- frequencies_2018 %>% 
+  mutate(discurso = "C.P.P. 2018", .before = palabra) 
+
+messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
+head(messages)
+```
 
