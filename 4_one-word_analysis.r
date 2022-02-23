@@ -39,7 +39,7 @@ pic_2018 <- frequencies_2018 %>%
 (pic_2018 + pic_2019) / pic_2020 
 
 
-# TF-IDF analysis ---------------------------------------------------------
+# TF-IDF Analysis - one data frame ----------------------------------------
 
 frequencies_2020 <- frequencies_2020 %>% 
   mutate(discurso = "C.P.P. 2020", .before = palabra) 
@@ -50,6 +50,34 @@ frequencies_2018 <- frequencies_2018 %>%
 
 messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
 head(messages)
+
+
+# TF-IDF Analysis - Inverse document frequency ----------------------------
+
+messages_tfidf <- bind_tf_idf(messages, 
+                              term = palabra, 
+                              document = discurso,
+                              n = n)
+head(messages_tfidf) 
+
+
+# TF-IDF Analysis - Plotting TF-IDF ---------------------------------------
+
+messages_tfidf %>%
+  group_by(discurso) %>%
+  top_n(15) %>%
+  ungroup %>%
+  mutate(discurso = as.factor(discurso),
+         palabra = reorder_within(palabra, tf_idf, discurso)) %>%
+  ggplot(aes(palabra, tf_idf, fill = discurso)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~discurso, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(y = "tf-idf",
+       x = NULL,
+       title = "Cuentas Públicas Participativas")
 
 
 

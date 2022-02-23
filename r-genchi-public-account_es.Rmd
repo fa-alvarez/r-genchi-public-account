@@ -254,7 +254,7 @@ pic_2018 <- frequencies_2018 %>%
 
 Unimos las frecuencias en un solo data frame, identificando palabras y frecuencias con sus respectivos discursos.
 
-```{r 4_one-word_analysis_TF-IDF}
+```{r 4_one-word_analysis_TF-IDF-one_data_frame}
 frequencies_2020 <- frequencies_2020 %>% 
   mutate(discurso = "C.P.P. 2020", .before = palabra) 
 frequencies_2019 <- frequencies_2019 %>% 
@@ -265,4 +265,36 @@ frequencies_2018 <- frequencies_2018 %>%
 messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
 head(messages)
 ```
+
+Luego, calculamos las frecuencias inversas de las palabras.
+
+```{r 4_one-word_analysis_TF-IDF_inverse_document_frequency}
+messages_tfidf <- bind_tf_idf(messages, 
+                              term = palabra, 
+                              document = discurso,
+                              n = n)
+head(messages_tfidf) 
+```
+
+Y comparamos gráficamente.
+
+```{r 4_one-word_analysis_TF-IDF_plotting_TF-IDF, message=FALSE}
+messages_tfidf %>%
+  group_by(discurso) %>%
+  top_n(9) %>%
+  ungroup %>%
+  mutate(discurso = as.factor(discurso),
+         palabra = reorder_within(palabra, tf_idf, discurso)) %>%
+  ggplot(aes(palabra, tf_idf, fill = discurso)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~discurso, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(y = "tf-idf",
+       x = NULL)
+```
+
+De las gráficas anteriores, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia sanitaria de pandemia que estamos viviendo a la fecha. Similarmente, esto ocurre para los términos *sanitaria* y *pandemia*.
+
 
