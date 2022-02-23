@@ -38,3 +38,18 @@ pic_2018 <- frequencies_2018 %>%
 
 (pic_2018 + pic_2019) / pic_2020 
 
+
+# TF-IDF analysis ---------------------------------------------------------
+
+frequencies_2020 <- frequencies_2020 %>% 
+  mutate(discurso = "C.P.P. 2020", .before = palabra) 
+frequencies_2019 <- frequencies_2019 %>% 
+  mutate(discurso = "C.P.P. 2019", .before = palabra) 
+frequencies_2018 <- frequencies_2018 %>% 
+  mutate(discurso = "C.P.P. 2018", .before = palabra) 
+
+messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
+head(messages)
+
+
+
