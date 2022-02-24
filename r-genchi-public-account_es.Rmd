@@ -61,7 +61,7 @@ my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", 
 more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", "período", 
                                      "cuenta", "informe", "viii", "monto", "diariamente",
                                      "diferentes", "impacta", "enfocar",
-                                     "circuito", "sanitarias", "deberá"))
+                                     "circuito", "sanitarias", "deberá", "tot", "c.e.t."))
 ```
 
 ## Expresiones Regulares y Palabras Vacías (*stopwords*)
@@ -291,10 +291,9 @@ messages_tfidf %>%
   coord_flip() +
   scale_x_reordered() +
   scale_y_continuous(expand = c(0,0)) +
-  labs(y = "tf-idf",
-       x = NULL)
+  labs(y = "tf-idf", x = NULL)
 ```
 
-De las gráficas anteriores, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia sanitaria de pandemia que estamos viviendo a la fecha. Similarmente, esto ocurre para los términos *sanitaria* y *pandemia*.
+De las gráficas anteriores, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia sanitaria de pandemia que estamos viviendo a la fecha. Similarmente, esto ocurre para los términos *pandemia* y *contagios*.
 
 
