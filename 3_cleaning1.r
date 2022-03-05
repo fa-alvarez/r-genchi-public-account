@@ -27,22 +27,24 @@ speech_2020_modif2 <- speech_2020 %>%
   str_replace_all("\\s\\d\\.\\d\\s", " ") %>% 
   str_replace_all("\\s+[abcde]+\\)+\\s", " ") %>% 
   str_replace_all("\\s[abcde]\\.\\d\\)", " ") %>% 
+  str_replace_all("19\\.-", " ") %>% # 
   str_remove_all("http\\S*") %>% # urls
   str_remove_all("www.\\S*") %>% # Remove web pages
-  
-
   str_remove_all("Twitter.+gendarmeriacl") %>%  # Remove social networks
   str_remove_all("N° de internos heridos.+\\(S\\.I\\.G\\)") %>% # Remove Tables
   str_remove_all("A continuación, se expone un desglose.+Fuente: Departamento de Infraestructura") %>% # Remove Tables 
   str_remove_all("MATRICULADOS EN EDUCACIÓN SUPERIOR DICIEMBRE 2019.+Total\\s+163\\s+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
-  str_remove_all("\\s+Tabla 1. Privados de Libertad Inscritos para dar PSU.+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
-  str_remove_all("\\s+Tabla 2. Resultados PSU 2019 de Privados de Libertad, por región:.+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
-  str_remove_all("\\s+Intervención:.+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
-  str_remove_all("\\s+Prestaciones.+Fuente: Departamento Subsistema Cerrado") %>% # Remove Tables   
-  str_remove_all("\\s+CANTIDAD DE CELULARES.+Fuente: Subdirección Operativa") %>% # Remove Tables 
-  str_remove_all("\\s+18. COVID: Estadística de contagios por región.+Fuente: Subdirección Operativa") %>% # Remove Tables 
-  str_remove_all("\\s+Catastro de beneficios otorgados.+Fuente: Subdirección Operativa") %>% # Remove Tables 
+  str_remove_all("\\s+Tabla Privados de Libertad Inscritos para dar PSU.+\\s+2046\\s+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
+  str_remove_all("\\s+Tabla Resultados PSU 2019 de Privados de Libertad, por región:.+\\s+13\\s+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
+  str_remove_all("\\s+INTERNOS PARTICIPANDO.+\\s+Automotriz\\s+Fuente: Departamento Sistema Cerrado") %>% # Remove Tables 
+  str_remove_all("\\s+Eliminación de antecedentes:.+Fuente: Departamento Post Penitenciario") %>% # Remove Tables 
+  str_remove_all("\\s+Intervención:.+\\s+37\\s+Fuente: Departamento Subsistema Cerrado") %>% # Remove Tables 
+  str_remove_all("\\s+CANTIDAD DE CELULARES.+\\s+256\\s+Fuente: Subdirección Operativa") %>% # Remove Tables 
+  str_remove_all("\\sCOVID: Estadística de contagios por región.+\\s+1357\\s+Fuente: Subdirección Operativa") %>% # Remove Tables 
+  str_remove_all("\\s+Catastro.+\\s+167\\s+Fuente: Subdirección Operativa") %>% # Remove Tables 
+  str_remove_all("\\sfecha:.+Fuente: Subdirección Operativa") %>% # Remove Tables 
   stripWhitespace() # Remove unnecessary spaces
+
 speech_2020 <- gsub("COVID 19", "COVID", speech_2020) # Standardize COVID-19
 speech_2020 <- gsub("COVID- 19", "COVID", speech_2020) # Standardize COVID-19
 
