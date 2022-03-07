@@ -1,20 +1,13 @@
-source("1_libraries.r")
-source("2_source.r")
+# source("1_libraries.r")
+# source("2_source.r")
 
 
 # Speech 2020 (management 2019) Removing regular expressions --------------
 
-# write_file(speech_2020_modif2, "speech_2020_modif2.txt", FALSE)
-
-# str_replace_all(a,
-#                 "",
-#                 "")
-
 # diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 # diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 
-
-speech_2020_modif2 <- speech_2020 %>%
+speech_2020 <- speech_2020 %>%
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("“") %>% str_remove_all("”") %>% # Remove "" 
   str_replace_all("MINJU", "MINJUDDHH") %>% # Ministerio de Justicia y DDHH
@@ -45,8 +38,35 @@ speech_2020_modif2 <- speech_2020 %>%
   str_remove_all("\\sfecha:.+Fuente: Subdirección Operativa") %>% # Remove Tables 
   stripWhitespace() # Remove unnecessary spaces
 
-speech_2020 <- gsub("COVID 19", "COVID", speech_2020) # Standardize COVID-19
-speech_2020 <- gsub("COVID- 19", "COVID", speech_2020) # Standardize COVID-19
+
+# Speech 2020 (management 2019) Additional corrections --------------------
+
+# diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
+
+speech_2020 <- speech_2020 %>% 
+  str_replace_all("COVID\\s19", "COVID-19") %>% # Standardize COVID-19
+  str_replace_all("COVID-\\s19", "COVID-19") %>% 
+  str_replace_all("COVID:", "COVID-19") %>% 
+  str_replace_all("Covid-19", "COVID-19") %>% 
+  str_replace_all("Covid19", "COVID-19") %>% 
+  str_replace_all("COVID y", "COVID-19 y") %>% 
+  str_replace_all("cas2", "cas") %>% # Others
+  str_replace_all("ransparencia\\.", "ransparencia ") %>% 
+  str_replace_all("para la transparencia", "para la Transparencia") %>% 
+  str_replace_all("s e g u r i d a d in t e r na", "seguridad interna") %>% 
+  str_replace_all("d e l o s re c i n to s", "de los recintos") %>% 
+  str_replace_all("p e n i te nc i a r io s", "penitenciarios") %>% 
+  str_remove_all("Departamento Sistema Cerrado") %>% 
+  str_remove_all("Departamento de Salud") %>% 
+  str_remove_all("Departamento de DDHH") %>% 
+  str_remove_all("Departamento DDHH") %>% 
+  str_remove_all("Departamento de Promoción y Protección de los DDHH") %>% 
+  str_remove_all("Departamento de Promoción y Protección de Derechos Humanos") %>% 
+  str_remove_all("Departamento de Promoción y Protección de los Derechos Humanos") %>% 
+  str_remove_all("Departamento de Infraestructura") %>% 
+  str_remove_all("Departamento de Informática") %>% 
+  str_remove_all("Departamento en el Sistema Cerrado") %>% 
+  str_remove_all("Departamento") 
 
 
 # Speech 2020 (management 2019) Calculating first frequencies -------------
