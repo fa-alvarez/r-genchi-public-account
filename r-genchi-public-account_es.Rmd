@@ -128,7 +128,15 @@ speech_2020 <- speech_2020 %>%
   str_remove_all("Departamento de Infraestructura") %>% 
   str_remove_all("Departamento de Informática") %>% 
   str_remove_all("Departamento en el Sistema Cerrado") %>% 
-  str_remove_all("Departamento") 
+  str_remove_all("Departamento") %>% 
+  str_replace_all("autoridades sanitarias", "autoridad sanitaria") %>% 
+  str_replace_all("condiciones sanitarias", "condición sanitaria") %>% 
+  str_replace_all("residencias sanitarias", "residencia sanitaria") %>% 
+  str_replace_all("restricciones sanitarias", "restricción sanitaria") %>% 
+  str_replace_all("sanitarias", "sanitaria") %>% 
+  str_replace_all("Sanitarias", "sanitaria") %>% 
+  str_replace_all("contagios", "contagio") %>% 
+  stripWhitespace() 
 ```
 
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
@@ -199,6 +207,10 @@ speech_2019 <- speech_2019 %>%
   str_replace_all("Departamento de Control Penitenciario", " ") %>% 
   str_replace_all("departamentos y/o unidades", " ") %>% 
   str_remove_all("a Departamento") %>% 
+  str_remove_all("términos") %>% 
+  str_remove_all("mejorando") %>% 
+  str_remove_all("desarrollar") %>% 
+  str_remove_all("porcentaje") %>% 
   stripWhitespace()
 ```
 
@@ -355,6 +367,13 @@ messages_tfidf %>%
   labs(y = "tf-idf", x = NULL)
 ```
 
-De las gráficas anteriores, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia sanitaria de pandemia que estamos viviendo a la fecha. Similarmente, esto ocurre para los términos *pandemia* y *contagios*.
+De las gráficas anteriores, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de *pandemia* que estamos viviendo a la fecha.  En este contexto, se implementaron *visitas* virtuales con programación previa y el acceso a *teléfonos* público para que los internos mantengan contacto con sus familiares.
+
+Durante el 2019, el discurso se enfocó en destacar las gestiones entre Gendarmería y el Ministerio de Justicia y Derechos Humanos (*MINJUDDHH*) en temáticas tales como: mejoras al Regalmento de Establecimientos Penitenciarios, cooperación *internacional*, modificaciones a bases de licitación que componen *contratos* de concesión de cárceles, Proyecto +R que contempla la inserción *laboral*, entre otras.
+
+Por su parte, en el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* o *usuarios* que han sido *intervenidos*.  Asimismo, se rindió cuenta de *recursos* ejecutados, financiados en la Ley de Presupuesto.  También se mencionan *logros* en ámbitos de seguridad y custodia, reinserción social y gestión institucional.
+
+
+
 
 
