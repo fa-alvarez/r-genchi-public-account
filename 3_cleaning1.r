@@ -66,7 +66,15 @@ speech_2020 <- speech_2020 %>%
   str_remove_all("Departamento de Infraestructura") %>% 
   str_remove_all("Departamento de Informática") %>% 
   str_remove_all("Departamento en el Sistema Cerrado") %>% 
-  str_remove_all("Departamento") 
+  str_remove_all("Departamento") %>% 
+  str_replace_all("autoridades sanitarias", "autoridad sanitaria") %>% 
+  str_replace_all("condiciones sanitarias", "condición sanitaria") %>% 
+  str_replace_all("residencias sanitarias", "residencia sanitaria") %>% 
+  str_replace_all("restricciones sanitarias", "restricción sanitaria") %>% 
+  str_replace_all("sanitarias", "sanitaria") %>% 
+  str_replace_all("Sanitarias", "sanitaria") %>% 
+  str_replace_all("contagios", "contagio") %>% 
+  stripWhitespace() 
 
 
 # Speech 2020 (management 2019) Calculating first frequencies -------------

@@ -53,6 +53,10 @@ speech_2019 <- speech_2019 %>%
   str_replace_all("Departamento de Control Penitenciario", " ") %>% 
   str_replace_all("departamentos y/o unidades", " ") %>% 
   str_remove_all("a Departamento") %>% 
+  str_remove_all("términos") %>% 
+  str_remove_all("mejorando") %>% 
+  str_remove_all("desarrollar") %>% 
+  str_remove_all("porcentaje") %>% 
   stripWhitespace()
 
 
