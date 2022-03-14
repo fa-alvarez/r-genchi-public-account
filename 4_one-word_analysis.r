@@ -1,8 +1,8 @@
-source("1_libraries.r")
-source("2_source.r")
-source("3_cleaning1.r")
-source("3_cleaning2.r")
-source("3_cleaning3.r")
+# source("1_libraries.r")
+# source("2_source.r")
+# source("3_cleaning1.r")
+# source("3_cleaning2.r")
+# source("3_cleaning3.r")
 
 # Picturing frequencies per word ------------------------------------------
 
