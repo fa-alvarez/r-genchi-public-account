@@ -374,6 +374,8 @@ Durante el 2019, el discurso se enfocó en destacar los programas de intervenci�
 Por último, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de *pandemia* que estamos viviendo a la fecha.  En este contexto, se implementaron *visitas* virtuales con programación previa y el acceso a teléfonos públicos para que los internos mantengan contacto con sus familiares.  También se puso atención a la gran cantidad de detenidos que eran recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
 
 
+# Análisis por bigramas
+
 
 
 
