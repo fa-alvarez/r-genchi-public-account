@@ -65,7 +65,7 @@ head(messages_tfidf)
 
 messages_tfidf %>%
   group_by(discurso) %>%
-  top_n(9) %>%
+  top_n(5) %>%
   ungroup %>%
   mutate(discurso = as.factor(discurso),
          palabra = reorder_within(palabra, tf_idf, discurso)) %>%
