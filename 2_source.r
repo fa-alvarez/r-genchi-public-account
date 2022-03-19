@@ -36,6 +36,5 @@ my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", 
                                    "tienen", "puede", "ir", "hace"))
 more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", "período", 
                                      "cuenta", "informe", "viii", "monto", "diariamente",
-                                     "diferentes", "impacta", "enfocar",
-                                     "circuito", "sanitarias", "deberá"))
+                                     "diferentes", "impacta", "enfocar", "deberá"))
 

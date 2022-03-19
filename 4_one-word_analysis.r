@@ -1,8 +1,8 @@
-source("1_libraries.r")
-source("2_source.r")
-source("3_cleaning1.r")
-source("3_cleaning2.r")
-source("3_cleaning3.r")
+# source("1_libraries.r")
+# source("2_source.r")
+# source("3_cleaning1.r")
+# source("3_cleaning2.r")
+# source("3_cleaning3.r")
 
 # Picturing frequencies per word ------------------------------------------
 
@@ -65,7 +65,7 @@ head(messages_tfidf)
 
 messages_tfidf %>%
   group_by(discurso) %>%
-  top_n(15) %>%
+  top_n(5) %>%
   ungroup %>%
   mutate(discurso = as.factor(discurso),
          palabra = reorder_within(palabra, tf_idf, discurso)) %>%
@@ -75,9 +75,6 @@ messages_tfidf %>%
   coord_flip() +
   scale_x_reordered() +
   scale_y_continuous(expand = c(0,0)) +
-  labs(y = "tf-idf",
-       x = NULL,
-       title = "Cuentas Públicas Participativas")
-
+  labs(y = "tf-idf", x = NULL)
 
 
