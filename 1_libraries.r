@@ -4,6 +4,7 @@
 library(renv)
 library(pdftools)
 library(tidytext)
+library(tidyr)
 library(dplyr)
 library(patchwork)
 library(tm)
