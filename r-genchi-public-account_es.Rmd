@@ -11,7 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r 1_libraries, include=FALSE}
-source("1_libraries.r")
+library(renv)
+library(pdftools)
+library(tidytext)
+library(dplyr)
+library(patchwork)
+library(tm)
+library(stringr)
+library(readr)
+library(ggplot2)
+library(diffobj)
 ```
 
 # Introducción
@@ -25,9 +34,9 @@ Para este análisis se aplican técnicas de análisis de texto en R a las cuenta
 Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  
 
 ```{r 2_source_reading}
-speech_2020 <- pdf_text("input/discurso_2020_2019.pdf")
-speech_2019 <- pdf_text("input/discurso_2019_2018.pdf")
-speech_2018 <- pdf_text("input/discurso_2018_2017.pdf")
+speech_2020 <- pdf_text("data/discurso_2020_2019.pdf")
+speech_2019 <- pdf_text("data/discurso_2019_2018.pdf")
+speech_2018 <- pdf_text("data/discurso_2018_2017.pdf")
 ```
 
 Luego, eliminamos las primeras páginas de los discursos ya que contienen elementos que no forman parte de la cuenta pública. Lo mismo hacemos para las últimas páginas; en ambos casos, solo cuando corresponda.
@@ -53,7 +62,7 @@ speech_2018 <- paste(speech_2018, collapse = " ")
 Las *stopwords* o *palabras vacías* son aquellas palabras que no tienen significado por sí mismas.  Solo modifican o acompañan a otras, por lo cual debemos quitarlas para el análisis.  Para ello, tomamos las palabras desde el repositorio [AnaText](https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt) que ya hemos descargado previamente.  Agregamos palabras adicionales que vayamos encontrando irrelevantes.
 
 ```{r 2_source_stopwords, message=FALSE}
-stopwords_es <- read_csv("input/vacias.txt", col_names = TRUE)
+stopwords_es <- read_csv("data/vacias.txt", col_names = TRUE)
 my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", "dado", 
                                    "dar", "debido", "decir", "acerca", "pesos",
                                    "fin", "ser", "respecto", "debe", "gran", "tiene",
@@ -290,6 +299,8 @@ Primero calculamos y graficamos las palabras más frecuentes en cada discurso pa
 Graficamos las 10 palabras más frecuentes de cada discurso.
 
 ```{r 4_one-word_analysis_frequencies}
+#png("figs/one-word_frequencies.png", width = 1344, height = 960)
+
 pic_2020 <- frequencies_2020 %>% 
   slice_head(n = 10) %>% 
   ggplot(aes(y = reorder(palabra, n), n)) +
@@ -321,6 +332,8 @@ pic_2018 <- frequencies_2018 %>%
   theme(plot.title = element_text(hjust = 0.5))
 
 (pic_2018 + pic_2019) / pic_2020 
+
+#dev.off()
 ```
 
 ## Análisis TF-IDF
@@ -371,10 +384,7 @@ En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocaci
 
 Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los establecimientos penitenciarios.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, la adopción de normas *internacionales* en el ámbito contable, buenas prácticas ajustadas al derecho *internacional* y el cumplimiento de compromisos con organismos *internacionales*.  También se menciona la realización de distintas actividades *culturales* con la participación de la población penal.
 
-Por último, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de *pandemia* que estamos viviendo a la fecha.  En este contexto, se implementaron *visitas* virtuales con programación previa y el acceso a teléfonos públicos para que los internos mantengan contacto con sus familiares.  También se puso atención a la gran cantidad de detenidos que eran recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
-
-
-
+Por último, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de *pandemia* que comenzó en dicho año.  En este contexto, se implementaron *visitas* virtuales con programación previa y el acceso a teléfonos públicos para que los internos mantengan contacto con sus familiares.  Por otro lado, también se puso atención a la gran cantidad de detenidos que eran recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
 
 
 
