@@ -1,8 +1,15 @@
 ---
-title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2019**"
-author: "Fabián Álvarez / Roberto Rodríguez"
-date: "09-11-2020"
+title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
+author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez"
+date: "Primera edición: 09-11-2020 - Actualización: 08/05/2022"
 output: html_document
+knit: (function(inputFile, encoding) {
+  out_dir <- '../output/technical-reports';
+  rmarkdown::render(inputFile,
+    encoding=encoding,
+    output_file=file.path(dirname(inputFile), out_dir, 'genchi-technical-report_es.html')
+    )
+  })
 ---
 
 ```{r setup, include=FALSE}
@@ -25,23 +32,27 @@ library(diffobj)
 
 # Introducción
 
-Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retro alimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
+Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retroalimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
 
-Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019 y 2020 (gestión 2017, 2018 y 2019, respectivamente).
+Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019, 2020 y 2021 (gestión 2017, 2018, 2019 y 2020, respectivamente).
 
 # Lectura y limpieza de archivos
 
 Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  
 
-```{r 2_source_reading}
-speech_2020 <- pdf_text("data/discurso_2020_2019.pdf")
-speech_2019 <- pdf_text("data/discurso_2019_2018.pdf")
-speech_2018 <- pdf_text("data/discurso_2018_2017.pdf")
+```{r 2_source|reading}
+speech_2021 <- pdf_text("../data/discurso_2021_2020.pdf")
+speech_2020 <- pdf_text("../data/discurso_2020_2019.pdf")
+speech_2019 <- pdf_text("../data/discurso_2019_2018.pdf")
+speech_2018 <- pdf_text("../data/discurso_2018_2017.pdf")
 ```
 
 Luego, eliminamos las primeras páginas de los discursos ya que contienen elementos que no forman parte de la cuenta pública. Lo mismo hacemos para las últimas páginas; en ambos casos, solo cuando corresponda.
 
-```{r 2_source_removing_pages}
+```{r 2_source|removing_pages}
+speech_2021 <- speech_2021 %>% 
+  .[-1] %>% 
+  .[-13]
 speech_2020 <- speech_2020 %>%
   .[-1:-2] %>% 
   .[-53:-56]
@@ -54,6 +65,7 @@ speech_2018 <- speech_2018 %>%
 Los objetos en cada discurso quedaron separados, por lo que los unimos en un solo objeto por cada discurso.
 
 ```{r 2_source_concatenating}
+speech_2021 <- paste(speech_2021, collapse = " ")
 speech_2020 <- paste(speech_2020, collapse = " ")
 speech_2019 <- paste(speech_2019, collapse = " ")
 speech_2018 <- paste(speech_2018, collapse = " ")
@@ -61,8 +73,8 @@ speech_2018 <- paste(speech_2018, collapse = " ")
 
 Las *stopwords* o *palabras vacías* son aquellas palabras que no tienen significado por sí mismas.  Solo modifican o acompañan a otras, por lo cual debemos quitarlas para el análisis.  Para ello, tomamos las palabras desde el repositorio [AnaText](https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt) que ya hemos descargado previamente.  Agregamos palabras adicionales que vayamos encontrando irrelevantes.
 
-```{r 2_source_stopwords, message=FALSE}
-stopwords_es <- read_csv("data/vacias.txt", col_names = TRUE)
+```{r 2_source|stopwords, message=FALSE}
+stopwords_es <- read_csv("../data/vacias.txt", col_names = TRUE, show_col_types = FALSE)
 my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", "dado", 
                                    "dar", "debido", "decir", "acerca", "pesos",
                                    "fin", "ser", "respecto", "debe", "gran", "tiene",
@@ -76,11 +88,53 @@ more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", 
 
 Revisamos expresiones regulares y palabras vacías para descartar del documento.
 
+### Discurso 2021 (Gestión 2020)
+
+Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.
+
+```{r 3_cleaning1|regular_expressions_2021_2020}
+speech_2021 <- speech_2021 %>%
+  str_replace_all("\n", " ") %>% # Replace "\n" by space
+  str_remove_all("“") %>% str_remove_all("”") %>% # Remove "" 
+  str_remove_all("INTRODUCCIÓN") %>% 
+  str_replace_all("\\d+\\s+\\S+gob\\.cl", " ") %>% # Pages
+  str_replace_all("INFORME FINAL", " ") %>%
+  str_replace_all("\\s\\S+\\.-", " ") %>% str_replace_all("VI\\.", " ") %>% # Numbering
+  str_replace_all("\\s\\d+-\\s", " ") %>% 
+  str_replace_all("\\s\\d\\.\\s", " ") %>% 
+  str_replace_all("5\\.1", " ") %>% str_replace_all("5\\.2-", " ") %>% 
+  str_replace_all("\\s[abcde]+\\)\\s", " ") %>% 
+  str_replace_all("http\\S+\\s", " ") %>% # urls
+  str_replace_all("SOCIEDAD\\S+\\s", " ") %>% 
+  str_replace_all("Gendarmería de Chile", " ") %>% str_replace_all("Gendarmería", " ") %>% 
+  str_replace_all("Institución.+Manríquez", " ") %>% 
+  str_replace_all("con 64\\s+.+Nacional de Chile", " ") %>% str_replace_all("64 \\(1\\)", " ") %>% 
+  str_replace_all("públicas65", "públicas") %>% str_replace_all("decisiones\\.66", "decisiones") %>% 
+  str_replace_all("65\\s+Instructivo.+Transparencia\\.2015\\.", " ") %>% 
+  str_replace_all("Informe Ejecutivo", " ") %>% 
+  str_replace_all("informe Resumen Ejecutivo", " ") %>% 
+  str_replace_all("\\Snforme final", " ") %>% 
+  str_replace_all("\\Snforme.", " ") %>% 
+  stripWhitespace() # Remove unnecessary spaces
+```
+
+```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
+
+speech_2021_modif1 <- speech_2021
+speech_2021_modif2 <- speech_2021 %>% 
+  str_replace_all("\\Snforme.", " ")
+
+#diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+```
+
+
+
 ### Discurso 2020 (Gestión 2019)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.
 
-```{r 3_cleaning1_regular_expressions_2020_2019}
+```{r 3_cleaning2_regular_expressions_2020_2019}
 speech_2020 <- speech_2020 %>%
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("“") %>% str_remove_all("”") %>% # Remove "" 
@@ -113,7 +167,7 @@ speech_2020 <- speech_2020 %>%
   stripWhitespace() # Remove unnecessary spaces
 ```
 
-```{r 3_cleaning1_additional_corrections}
+```{r 3_cleaning2_additional_corrections}
 speech_2020 <- speech_2020 %>% 
   str_replace_all("COVID\\s19", "COVID-19") %>% # Standardize COVID-19
   str_replace_all("COVID-\\s19", "COVID-19") %>% 
@@ -150,7 +204,7 @@ speech_2020 <- speech_2020 %>%
 
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning1_first_frequencies_2020_2019}
+```{r 3_cleaning2_first_frequencies_2020_2019}
 frequencies_2020 <- tibble(speech = speech_2020) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -159,7 +213,7 @@ frequencies_2020
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning1_second_frequencies_2020_2019, message=FALSE}
+```{r 3_cleaning2_second_frequencies_2020_2019, message=FALSE}
 frequencies_2020 <- frequencies_2020 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
@@ -171,7 +225,7 @@ head(frequencies_2020)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2019 y haciendo algunas correcciones.
 
-```{r 3_cleaning2_regular_expressions_2019_2018}
+```{r 3_cleaning3_regular_expressions_2019_2018}
 speech_2019 <- speech_2019 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("Tabla rela.+\\s+Fuente: Departamento de Infraestructura de Gendarmería de Chile") %>%  # Remove Tables
@@ -190,7 +244,7 @@ speech_2019 <- speech_2019 %>%
   str_remove_all("N°")
 ```
 
-```{r 3_cleaning2_additional_corrections}
+```{r 3_cleaning3_additional_corrections}
 speech_2019 <- speech_2019 %>% 
   str_replace_all("ETIntervención", "Intervención") %>% 
   str_replace_all("ETCapacitación", "Capacitación") %>% 
@@ -225,7 +279,7 @@ speech_2019 <- speech_2019 %>%
 
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning2_first_frequencies_2019_2018}
+```{r 3_cleaning3_first_frequencies_2019_2018}
 frequencies_2019 <- tibble(speech = speech_2019) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -234,7 +288,7 @@ frequencies_2019
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning2_second_frequencies_2019_2018, message=FALSE}
+```{r 3_cleaning3_second_frequencies_2019_2018, message=FALSE}
 frequencies_2019 <- frequencies_2019 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
@@ -246,11 +300,11 @@ head(frequencies_2019)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2018 y haciendo algunas correcciones.
 
-```{r 3_cleaning3_regular_expressions_2018_2017}
+```{r 3_cleaning4_regular_expressions_2018_2017}
 speech_2018 <- speech_2018 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("\\s+Allanamientos\\s+.+854") %>% # Remove Tables
-  str_remove_all("\\s+PROGRAMAS\\s+RE.+LACTANTES") %>% 
+  str_remove_all("\\s+PROGRAMApdf_documentS\\s+RE.+LACTANTES") %>% 
   str_remove_all("Distribución Regional.+NACIONAL\\s+43") %>% 
   str_remove_all("siguiente detalle.+Total\\s+305") %>% 
   str_remove_all("Aspirante Oficiales P.+327 Hombres\\)") %>% 
@@ -258,7 +312,7 @@ speech_2018 <- speech_2018 %>%
   str_remove_all("AÑO NOMBRE.+PUBLICA 30")
 ```
 
-```{r 3_cleaning3_additional_corrections}
+```{r 3_cleaning4_additional_corrections}
 speech_2018 <- speech_2018 %>% 
   str_remove_all("N°") %>% 
   str_replace_all("Departamento del Sistema Cerrado\\.", " ") %>% 
@@ -273,7 +327,7 @@ speech_2018 <- speech_2018 %>%
 
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning3_first_frequencies_2018_2017}
+```{r 3_cleaning4_first_frequencies_2018_2017}
 frequencies_2018 <- tibble(speech = speech_2018) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -282,7 +336,7 @@ frequencies_2018
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning3_second_frequencies_2018_2017, message=FALSE}
+```{r 3_cleaning4_second_frequencies_2018_2017, message=FALSE}
 frequencies_2018 <- frequencies_2018 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
@@ -299,7 +353,6 @@ Primero calculamos y graficamos las palabras más frecuentes en cada discurso pa
 Graficamos las 10 palabras más frecuentes de cada discurso.
 
 ```{r 4_one-word_analysis_frequencies}
-#png("figs/one-word_frequencies.png", width = 1344, height = 960)
 
 pic_2020 <- frequencies_2020 %>% 
   slice_head(n = 10) %>% 
@@ -333,8 +386,17 @@ pic_2018 <- frequencies_2018 %>%
 
 (pic_2018 + pic_2019) / pic_2020 
 
-#dev.off()
 ```
+
+```{r 4_one-word_analysis_frequencies_fig, include=FALSE}
+png("../figs/one-word_frequencies.png", width = 1344, height = 960)
+(pic_2018 + pic_2019) / pic_2020 
+dev.off()
+```
+
+
+
+
 
 ## Análisis TF-IDF
 
