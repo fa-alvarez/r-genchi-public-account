@@ -21,6 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(renv)
 library(pdftools)
 library(tidytext)
+library(tidyr)
 library(dplyr)
 library(patchwork)
 library(tm)
@@ -131,14 +132,16 @@ speech_2021 <- speech_2021 %>%
   str_remove_all("Unidad de Atención y Participación Ciudadana") %>% 
   str_remove_all("Unidad de Comunicaciones") %>% 
   str_replace_all("Unidades Penales", "Unidad Penal") %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios") 
-
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
+  str_remove_all("disponer") %>% 
+  str_replace_all("pacientes", "paciente") %>% 
+  str_replace_all("PACIENTES", "paciente")
 ```
 
 ```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
 speech_2021_modif1 <- speech_2021
 speech_2021_modif2 <- speech_2021 %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+  str_replace_all("PACIENTES", "paciente")
 
 #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
@@ -361,11 +364,25 @@ speech_2018 <- speech_2018 %>%
   str_remove_all("siguiente detalle.+Total\\s+305") %>% 
   str_remove_all("Aspirante Oficiales P.+327 Hombres\\)") %>% 
   str_remove_all("\\s+N° de horas.+ARAUCANÍA\\)") %>% 
-  str_remove_all("AÑO NOMBRE.+PUBLICA 30")
+  str_remove_all("AÑO\\s+NOMBRE.+PUBLICA\\s+30") 
 ```
 
+```{r 3_cleaning4|comparison, eval=FALSE, include=FALSE}
+speech_2018_modif1 <- speech_2018
+speech_2018_modif2 <- speech_2018 %>% 
+  str_remove_all("AÑO\\s+NOMBRE.+PUBLICA\\s+30") 
+
+#diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+```
+
+
+
+
+
+
 ```{r 3_cleaning4|additional_corrections}
-speech_2018 <- speech_2018 %>% 
+speech_2018 <- speech_2018_temp %>% 
   str_remove_all("N°") %>% 
   str_replace_all("Departamento del Sistema Cerrado\\.", " ") %>% 
   str_replace_all("Departamento de Recursos Humanos", " ") %>% 
@@ -413,13 +430,22 @@ Primero calculamos y graficamos las palabras más frecuentes en cada discurso pa
 
 Graficamos las 10 palabras más frecuentes de cada discurso.
 
-```{r 4_one-word_analysis_frequencies}
+```{r 4_one-word_analysis|frequencies}
+pic_2021 <- frequencies_2021 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#dbb012") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2021") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 pic_2020 <- frequencies_2020 %>% 
   slice_head(n = 10) %>% 
   ggplot(aes(y = reorder(palabra, n), n)) +
   geom_col(fill = "#619cff") +
-  geom_text(aes(label = n), size = 3, hjust = -0.5) +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
   labs(y = NULL, x = "frecuencia") +
   ggtitle("Discurso 2020") +
@@ -445,25 +471,23 @@ pic_2018 <- frequencies_2018 %>%
   ggtitle("Discurso 2018") +
   theme(plot.title = element_text(hjust = 0.5))
 
-(pic_2018 + pic_2019) / pic_2020 
-
+(pic_2018 + pic_2019) / (pic_2020 + pic_2021)
 ```
 
-```{r 4_one-word_analysis_frequencies_fig, include=FALSE}
+```{r 4_one-word_analysis|frequencies_fig, include=FALSE}
 png("../figs/one-word_frequencies.png", width = 1344, height = 960)
-(pic_2018 + pic_2019) / pic_2020 
+(pic_2018 + pic_2019) / (pic_2020 + pic_2021) 
 dev.off()
 ```
-
-
-
 
 
 ## Análisis TF-IDF
 
 Unimos las frecuencias en un solo data frame, identificando palabras y frecuencias con sus respectivos discursos.
 
-```{r 4_one-word_analysis_TF-IDF-one_data_frame}
+```{r 4_one-word_analysis|TF-IDF-one_data_frame}
+frequencies_2021 <- frequencies_2021 %>% 
+  mutate(discurso = "C.P.P. 2021", .before = palabra) 
 frequencies_2020 <- frequencies_2020 %>% 
   mutate(discurso = "C.P.P. 2020", .before = palabra) 
 frequencies_2019 <- frequencies_2019 %>% 
@@ -471,13 +495,13 @@ frequencies_2019 <- frequencies_2019 %>%
 frequencies_2018 <- frequencies_2018 %>% 
   mutate(discurso = "C.P.P. 2018", .before = palabra) 
 
-messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
+messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020, frequencies_2021)
 head(messages)
 ```
 
 Luego, calculamos las frecuencias inversas de las palabras.
 
-```{r 4_one-word_analysis_TF-IDF_inverse_document_frequency}
+```{r 4_one-word_analysis|TF-IDF_inverse_document_frequency}
 messages_tfidf <- bind_tf_idf(messages, 
                               term = palabra, 
                               document = discurso,
@@ -487,27 +511,189 @@ head(messages_tfidf)
 
 Y comparamos gráficamente.
 
-```{r 4_one-word_analysis_TF-IDF_plotting_TF-IDF, message=FALSE}
-messages_tfidf %>%
-  group_by(discurso) %>%
-  top_n(5) %>%
-  ungroup %>%
-  mutate(discurso = as.factor(discurso),
-         palabra = reorder_within(palabra, tf_idf, discurso)) %>%
-  ggplot(aes(palabra, tf_idf, fill = discurso)) +
-  geom_col(show.legend = FALSE) +
-  facet_wrap(~discurso, scales = "free_y") +
-  coord_flip() +
-  scale_x_reordered() +
-  scale_y_continuous(expand = c(0,0)) +
-  labs(y = "tf-idf", x = NULL)
+```{r 4_one-word_analysis|TF-IDF_plotting_TF-IDF, message=FALSE}
+one_word_plot <-
+  messages_tfidf %>%
+    group_by(discurso) %>%
+    top_n(5) %>%
+    ungroup %>%
+    mutate(discurso = as.factor(discurso),
+           palabra = reorder_within(palabra, tf_idf, discurso)) %>%
+    ggplot(aes(palabra, tf_idf, fill = discurso)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~discurso, scales = "free_y") +
+    coord_flip() +
+    scale_x_reordered() +
+    scale_y_continuous(expand = c(0,0)) +
+    labs(y = "tf-idf", x = NULL)
+one_word_plot
 ```
 
-En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados, financiados en la Ley de Presupuesto.  También se mencionan *logros* en ámbitos de seguridad y custodia, reinserción social y gestión institucional.
+```{r 4_one-word_analysis|TF-IDF_plotting_fig, include=FALSE}
+png("../figs/one-word_tf-idf.png", width = 1344, height = 960)
+one_word_plot
+dev.off()
+```
 
-Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los establecimientos penitenciarios.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, la adopción de normas *internacionales* en el ámbito contable, buenas prácticas ajustadas al derecho *internacional* y el cumplimiento de compromisos con organismos *internacionales*.  También se menciona la realización de distintas actividades *culturales* con la participación de la población penal.
+En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la impartición de *diplomados* para el perfeccionamiento del personal.
 
-Por último, vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de *pandemia* que comenzó en dicho año.  En este contexto, se implementaron *visitas* virtuales con programación previa y el acceso a teléfonos públicos para que los internos mantengan contacto con sus familiares.  Por otro lado, también se puso atención a la gran cantidad de detenidos que eran recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
+Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los establecimientos penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
+
+Vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de pandemia que comenzó en dicho año y el consecuente riesgo de *contagio*.  Por otro lado, se informa sobre la publicación de un estudio de reincidencia que consideró *egresos* de privados de libertad en el año 2016.  Además, se puso atención a la gran cantidad de detenidos durante el 2019 que fueron recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
+
+Por último, el discurso del 2021 enfatizó dos grandes temáticas.  La primera, relacionada con la salud *mental* y la derivación de posibles *pacientes* privados de libertad con necesidades de atención *clínica* psicológica en el ámbito de la *psicoterapia* individual.  Esto, en atención especialmente a que durante el 2020 se mantuvo el riesgo sanitario de pandemia.  El segundo tópico abordó el desarrollo de una Cuenta Pública *Participativa* con mayor inclusión social y con transmisión vía streaming por segundo año consecutivo.
+
+
+# Análisis por bigramas
+
+Definimos algunas *stopwords* para descartar adicionalmente a las ya definidas y calculamos la frecuencia de los bigramas para cada documento.
+
+```{r 5_two-words_analysis|more_stopwords}
+bi_stopwords <- tibble(palabra = c("cuenta", "pública")) 
+```
+
+# Frecuencias
+
+```{r 5_two-words_analysis|bigram_frequencies_2021}
+bigram_2021 <- speech_2021 %>% 
+  tibble(speech = speech_2021) %>% 
+  unnest_tokens(input = speech,
+                output = palabra,
+                token = "ngrams",
+                n = 2) %>% 
+  filter(!is.na(palabra)) %>% 
+  count(palabra, sort = TRUE) %>% 
+  separate(palabra,
+           into = c("palabra_1", "palabra_2"),
+           sep = " ") %>% 
+  filter(!palabra_1 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_2 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_1 %in% my_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% my_stopwords$palabra) %>%
+  filter(!palabra_1 %in% bi_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% bi_stopwords$palabra) %>%
+  mutate(palabra = paste(palabra_1, palabra_2, sep = " "), .before = n) %>% 
+  dplyr::select(-c(palabra_1, palabra_2))
+head(bigram_2021)
+```
+
+```{r 5_two-words_analysis|bigram_frequencies_2020}
+bigram_2020 <- speech_2020 %>% 
+  tibble(speech = speech_2020) %>% 
+  unnest_tokens(input = speech,
+                output = palabra,
+                token = "ngrams",
+                n = 2) %>% 
+  filter(!is.na(palabra)) %>% 
+  count(palabra, sort = TRUE) %>% 
+  separate(palabra,
+           into = c("palabra_1", "palabra_2"),
+           sep = " ") %>% 
+  filter(!palabra_1 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_2 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_1 %in% my_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% my_stopwords$palabra) %>%
+  filter(!palabra_1 %in% bi_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% bi_stopwords$palabra) %>%
+  mutate(palabra = paste(palabra_1, palabra_2, sep = " "), .before = n) %>% 
+  dplyr::select(-c(palabra_1, palabra_2))
+head(bigram_2020)
+```
+
+```{r 5_two-words_analysis|bigram_frequencies_2019}
+bigram_2019 <- speech_2019 %>% 
+  tibble(speech = speech_2019) %>% 
+  unnest_tokens(input = speech,
+                output = palabra,
+                token = "ngrams",
+                n = 2) %>% 
+  filter(!is.na(palabra)) %>% 
+  count(palabra, sort = TRUE) %>% 
+  separate(palabra,
+           into = c("palabra_1", "palabra_2"),
+           sep = " ") %>% 
+  filter(!palabra_1 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_2 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_1 %in% my_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% my_stopwords$palabra) %>%
+  filter(!palabra_1 %in% bi_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% bi_stopwords$palabra) %>%
+  mutate(palabra = paste(palabra_1, palabra_2, sep = " "), .before = n) %>% 
+  dplyr::select(-c(palabra_1, palabra_2))
+head(bigram_2019)
+```
+
+```{r 5_two-words_analysis|bigram_frequencies_2018}
+bigram_2018 <- speech_2018 %>% 
+  tibble(speech = speech_2018) %>% 
+  unnest_tokens(input = speech,
+                output = palabra,
+                token = "ngrams",
+                n = 2) %>% 
+  filter(!is.na(palabra)) %>% 
+  count(palabra, sort = TRUE) %>% 
+  separate(palabra,
+           into = c("palabra_1", "palabra_2"),
+           sep = " ") %>% 
+  filter(!palabra_1 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_2 %in% stopwords_es$palabra) %>% 
+  filter(!palabra_1 %in% my_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% my_stopwords$palabra) %>%
+  filter(!palabra_1 %in% bi_stopwords$palabra) %>% 
+  filter(!palabra_2 %in% bi_stopwords$palabra) %>%
+  mutate(palabra = paste(palabra_1, palabra_2, sep = " "), .before = n) %>% 
+  dplyr::select(-c(palabra_1, palabra_2))
+head(bigram_2018)
+```
+
+Y graficamos los bigramas más frecuentes.
+
+```{r 5_two-words_analysis|bigram_frequencies}
+
+fig_2021 <- bigram_2021 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#dbb012") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2021") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+fig_2020 <- bigram_2020 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#619cff") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2020") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+fig_2019 <- bigram_2019 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#00ba38") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2019") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+fig_2018 <- bigram_2018 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#f8766d") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2018") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+(fig_2018 + fig_2019) / (fig_2020 + fig_2021)
+```
+
+
 
 
 
