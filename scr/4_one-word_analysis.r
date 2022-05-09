@@ -1,16 +1,21 @@
-# source("1_libraries.r")
-# source("2_source.r")
-# source("3_cleaning1.r")
-# source("3_cleaning2.r")
-# source("3_cleaning3.r")
 
 # Picturing frequencies per word ------------------------------------------
+
+pic_2021 <- frequencies_2021 %>% 
+  slice_head(n = 10) %>% 
+  ggplot(aes(y = reorder(palabra, n), n)) +
+  geom_col(fill = "#dbb012") +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
+  theme_minimal() +
+  labs(y = NULL, x = "frecuencia") +
+  ggtitle("Discurso 2021") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 pic_2020 <- frequencies_2020 %>% 
   slice_head(n = 10) %>% 
   ggplot(aes(y = reorder(palabra, n), n)) +
   geom_col(fill = "#619cff") +
-  geom_text(aes(label = n), size = 3, hjust = -0.5) +
+  geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
   labs(y = NULL, x = "frecuencia") +
   ggtitle("Discurso 2020") +
@@ -36,11 +41,20 @@ pic_2018 <- frequencies_2018 %>%
   ggtitle("Discurso 2018") +
   theme(plot.title = element_text(hjust = 0.5))
 
-(pic_2018 + pic_2019) / pic_2020 
+(pic_2018 + pic_2019) / (pic_2020 + pic_2021)
+
+
+# TF-IDF Analysis - Save figure -------------------------------------------
+
+png("../figs/one-word_frequencies.png", width = 1344, height = 960)
+(pic_2018 + pic_2019) / (pic_2020 + pic_2021) 
+dev.off()
 
 
 # TF-IDF Analysis - one data frame ----------------------------------------
 
+frequencies_2021 <- frequencies_2021 %>% 
+  mutate(discurso = "C.P.P. 2021", .before = palabra) 
 frequencies_2020 <- frequencies_2020 %>% 
   mutate(discurso = "C.P.P. 2020", .before = palabra) 
 frequencies_2019 <- frequencies_2019 %>% 
@@ -48,7 +62,7 @@ frequencies_2019 <- frequencies_2019 %>%
 frequencies_2018 <- frequencies_2018 %>% 
   mutate(discurso = "C.P.P. 2018", .before = palabra) 
 
-messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020)
+messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020, frequencies_2021)
 head(messages)
 
 
@@ -58,7 +72,7 @@ messages_tfidf <- bind_tf_idf(messages,
                               term = palabra, 
                               document = discurso,
                               n = n)
-head(messages_tfidf) 
+head(messages_tfidf)
 
 
 # TF-IDF Analysis - Plotting TF-IDF ---------------------------------------
