@@ -118,23 +118,57 @@ speech_2021 <- speech_2021 %>%
   stripWhitespace() # Remove unnecessary spaces
 ```
 
-```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
+```{r cleaning1|additional_corrections}
+speech_2021 <- speech_2021 %>% 
+  str_replace_all("Cuentas Públicas Participativas", "Cuenta Pública Participativa ") %>% 
+  str_replace_all("cuentas públicas", "cuenta pública") %>% 
+  str_replace_all("COVID 19", "COVID-19") %>% 
+  str_replace_all("\\sCOVID\\s", " COVID-19 ") %>% 
+  str_remove_all("\\(Consejo para la transparencia\\.2015\\)") %>% 
+  str_replace_all("Consejo de la Sociedad Civil \\(COSOC\\)", "Consejo de la Sociedad Civil") %>% 
+  str_replace_all("Consejo de la Sociedad Civil", "COSOC") %>% 
+  str_replace_all("CONSEJO DE LA SOCIEDAD CIVIL", "COSOC") %>% 
+  str_remove_all("Unidad de Atención y Participación Ciudadana") %>% 
+  str_remove_all("Unidad de Comunicaciones") %>% 
+  str_replace_all("Unidades Penales", "Unidad Penal") %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") 
 
+```
+
+```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
 speech_2021_modif1 <- speech_2021
 speech_2021_modif2 <- speech_2021 %>% 
-  str_replace_all("\\Snforme.", " ")
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
 
 #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 ```
 
+Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
+
+```{r 3_cleaning1|first_frequencies_2021_2020}
+frequencies_2021 <- tibble(speech = speech_2021) %>% 
+  unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
+  count(palabra, sort = TRUE)
+frequencies_2021
+```
+
+Quitamos las *stopwords* y recalculamos las frecuencias.
+
+```{r 3_cleaning1|second_frequencies_2021_2020, message=FALSE}
+frequencies_2021 <- frequencies_2021 %>% 
+  anti_join(stopwords_es) %>% 
+  anti_join(my_stopwords) %>% 
+  anti_join(more_stopwords)
+head(frequencies_2021)
+```
 
 
 ### Discurso 2020 (Gestión 2019)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.
 
-```{r 3_cleaning2_regular_expressions_2020_2019}
+```{r 3_cleaning2|regular_expressions_2020_2019}
 speech_2020 <- speech_2020 %>%
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("“") %>% str_remove_all("”") %>% # Remove "" 
@@ -167,7 +201,7 @@ speech_2020 <- speech_2020 %>%
   stripWhitespace() # Remove unnecessary spaces
 ```
 
-```{r 3_cleaning2_additional_corrections}
+```{r 3_cleaning2|additional_corrections}
 speech_2020 <- speech_2020 %>% 
   str_replace_all("COVID\\s19", "COVID-19") %>% # Standardize COVID-19
   str_replace_all("COVID-\\s19", "COVID-19") %>% 
@@ -202,9 +236,18 @@ speech_2020 <- speech_2020 %>%
   stripWhitespace() 
 ```
 
+```{r 3_cleaning2|comparison, eval=FALSE, include=FALSE}
+speech_2020_modif1 <- speech_2020
+speech_2020_modif2 <- speech_2020 %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+
+#diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
+diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
+```
+
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning2_first_frequencies_2020_2019}
+```{r 3_cleaning2|first_frequencies_2020_2019}
 frequencies_2020 <- tibble(speech = speech_2020) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -213,7 +256,7 @@ frequencies_2020
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning2_second_frequencies_2020_2019, message=FALSE}
+```{r 3_cleaning2|second_frequencies_2020_2019, message=FALSE}
 frequencies_2020 <- frequencies_2020 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
@@ -225,7 +268,7 @@ head(frequencies_2020)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2019 y haciendo algunas correcciones.
 
-```{r 3_cleaning3_regular_expressions_2019_2018}
+```{r 3_cleaning3|regular_expressions_2019_2018}
 speech_2019 <- speech_2019 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("Tabla rela.+\\s+Fuente: Departamento de Infraestructura de Gendarmería de Chile") %>%  # Remove Tables
@@ -244,7 +287,7 @@ speech_2019 <- speech_2019 %>%
   str_remove_all("N°")
 ```
 
-```{r 3_cleaning3_additional_corrections}
+```{r 3_cleaning3|additional_corrections}
 speech_2019 <- speech_2019 %>% 
   str_replace_all("ETIntervención", "Intervención") %>% 
   str_replace_all("ETCapacitación", "Capacitación") %>% 
@@ -277,9 +320,18 @@ speech_2019 <- speech_2019 %>%
   stripWhitespace()
 ```
 
+```{r 3_cleaning3|comparison, eval=FALSE, include=FALSE}
+speech_2019_modif1 <- speech_2019
+speech_2019_modif2 <- speech_2019 %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+
+#diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
+diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
+```
+
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning3_first_frequencies_2019_2018}
+```{r 3_cleaning3|first_frequencies_2019_2018}
 frequencies_2019 <- tibble(speech = speech_2019) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -288,7 +340,7 @@ frequencies_2019
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning3_second_frequencies_2019_2018, message=FALSE}
+```{r 3_cleaning3|second_frequencies_2019_2018, message=FALSE}
 frequencies_2019 <- frequencies_2019 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
@@ -300,7 +352,7 @@ head(frequencies_2019)
 
 Comenzamos eliminando las expresiones regulares para el Discurso 2018 y haciendo algunas correcciones.
 
-```{r 3_cleaning4_regular_expressions_2018_2017}
+```{r 3_cleaning4|regular_expressions_2018_2017}
 speech_2018 <- speech_2018 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("\\s+Allanamientos\\s+.+854") %>% # Remove Tables
@@ -312,7 +364,7 @@ speech_2018 <- speech_2018 %>%
   str_remove_all("AÑO NOMBRE.+PUBLICA 30")
 ```
 
-```{r 3_cleaning4_additional_corrections}
+```{r 3_cleaning4|additional_corrections}
 speech_2018 <- speech_2018 %>% 
   str_remove_all("N°") %>% 
   str_replace_all("Departamento del Sistema Cerrado\\.", " ") %>% 
@@ -325,9 +377,18 @@ speech_2018 <- speech_2018 %>%
   stripWhitespace() 
 ```
 
+```{r 3_cleaning4|comparison, eval=FALSE, include=FALSE}
+speech_2018_modif1 <- speech_2018
+speech_2018_modif2 <- speech_2018 %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+
+#diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+```
+
 Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
 
-```{r 3_cleaning4_first_frequencies_2018_2017}
+```{r 3_cleaning4|first_frequencies_2018_2017}
 frequencies_2018 <- tibble(speech = speech_2018) %>% 
   unnest_tokens(output = palabra, input = speech, strip_numeric = TRUE) %>%
   count(palabra, sort = TRUE)
@@ -336,7 +397,7 @@ frequencies_2018
 
 Quitamos las *stopwords* y recalculamos las frecuencias.
 
-```{r 3_cleaning4_second_frequencies_2018_2017, message=FALSE}
+```{r 3_cleaning4|second_frequencies_2018_2017, message=FALSE}
 frequencies_2018 <- frequencies_2018 %>% 
   anti_join(stopwords_es) %>% 
   anti_join(my_stopwords) %>% 
