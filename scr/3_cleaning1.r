@@ -40,14 +40,17 @@ speech_2021 <- speech_2021 %>%
   str_remove_all("Unidad de Atención y Participación Ciudadana") %>% 
   str_remove_all("Unidad de Comunicaciones") %>% 
   str_replace_all("Unidades Penales", "Unidad Penal") %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios") 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
+  str_remove_all("disponer") %>% 
+  str_replace_all("pacientes", "paciente") %>% 
+  str_replace_all("PACIENTES", "paciente")
 
 
 # Speech 2021 (management 2020) Document version comparison ---------------
 
 # speech_2021_modif1 <- speech_2021
 # speech_2021_modif2 <- speech_2021 %>% 
-#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+#   str_replace_all("PACIENTES", "paciente") 
 # 
 # #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 # diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
