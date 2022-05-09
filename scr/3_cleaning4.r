@@ -1,10 +1,6 @@
-# source("1_libraries.r")
-# source("2_source.r")
 
 # Speech 2018 (management 2017) Removing regular expressions --------------
 
-# diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
-# diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 
 speech_2018 <- speech_2018 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
@@ -19,8 +15,6 @@ speech_2018 <- speech_2018 %>%
 
 # Speech 2018 (management 2017) - Additional corrections ------------------
 
-# diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
-
 speech_2018 <- speech_2018 %>% 
   str_remove_all("N°") %>% 
   str_replace_all("Departamento del Sistema Cerrado\\.", " ") %>% 
@@ -31,6 +25,16 @@ speech_2018 <- speech_2018 %>%
   str_replace_all("incendios:Programa", "incendios Programa") %>% 
   str_replace_all("Coyhaique\\.Mantención", "Coyhaique Mantención") %>% 
   stripWhitespace() 
+
+
+# Speech 2019 (management 2017) Document version comparison ---------------
+
+# speech_2018_modif1 <- speech_2018
+# speech_2018_modif2 <- speech_2018 %>% 
+#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+# 
+# #diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+# diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 
 
 # Speech 2018 (management 2017) Calculating first frequencies -------------
@@ -48,6 +52,4 @@ frequencies_2018 <- frequencies_2018 %>%
   anti_join(my_stopwords) %>% 
   anti_join(more_stopwords)
 head(frequencies_2018)
-
-
 

@@ -1,11 +1,5 @@
-# source("1_libraries.r")
-# source("2_source.r")
-
 
 # Speech 2020 (management 2019) Removing regular expressions --------------
-
-# diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
-# diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 
 speech_2020 <- speech_2020 %>%
   str_replace_all("\n", " ") %>% # Replace "\n" by space
@@ -41,8 +35,6 @@ speech_2020 <- speech_2020 %>%
 
 # Speech 2020 (management 2019) Additional corrections --------------------
 
-# diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
-
 speech_2020 <- speech_2020 %>% 
   str_replace_all("COVID\\s19", "COVID-19") %>% # Standardize COVID-19
   str_replace_all("COVID-\\s19", "COVID-19") %>% 
@@ -75,6 +67,16 @@ speech_2020 <- speech_2020 %>%
   str_replace_all("Sanitarias", "sanitaria") %>% 
   str_replace_all("contagios", "contagio") %>% 
   stripWhitespace() 
+
+
+# # Speech 2020 (management 2019) Document version comparison ---------------
+# 
+# speech_2020_modif1 <- speech_2020
+# speech_2020_modif2 <- speech_2020 %>% 
+#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+# 
+# #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+# diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 
 
 # Speech 2020 (management 2019) Calculating first frequencies -------------

@@ -1,10 +1,5 @@
-# source("1_libraries.r")
-# source("2_source.r")
 
 # Speech 2019 (management 2018) Removing regular expressions --------------
-
-# diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
-# diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 
 speech_2019 <- speech_2019 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
@@ -25,8 +20,6 @@ speech_2019 <- speech_2019 %>%
 
 
 # Speech 2019 (management 2018) - Additional corrections ------------------
-
-# diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 
 speech_2019 <- speech_2019 %>% 
   str_replace_all("ETIntervención", "Intervención") %>% 
@@ -58,6 +51,16 @@ speech_2019 <- speech_2019 %>%
   str_remove_all("desarrollar") %>% 
   str_remove_all("porcentaje") %>% 
   stripWhitespace()
+
+
+# # Speech 2019 (management 2018) Document version comparison ---------------
+# 
+# speech_2019_modif1 <- speech_2019
+# speech_2019_modif2 <- speech_2019 %>% 
+#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+# 
+# #diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
+# diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 
 
 # Speech 2019 (management 2018) Calculating first frequencies -------------
