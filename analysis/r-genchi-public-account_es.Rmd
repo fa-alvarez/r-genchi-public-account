@@ -136,14 +136,15 @@ speech_2021 <- speech_2021 %>%
   str_remove_all("disponer") %>% 
   str_replace_all("pacientes", "paciente") %>% 
   str_replace_all("PACIENTES", "paciente") %>% 
-  str_replace_all("paciente", "pacientes")
+  str_replace_all("paciente", "pacientes") %>% 
+  str_replace_all("clínico", "clínica") %>% 
+  stripWhitespace()
 ```
 
 ```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
 speech_2021_modif1 <- speech_2021
 speech_2021_modif2 <- speech_2021 %>% 
-  str_replace_all("clínico", "clínica")
-  #stripWhitespace()
+  stripWhitespace()
 
 #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
@@ -381,17 +382,9 @@ speech_2018 <- speech_2018 %>%
   str_remove_all("II\\.\\s") %>% str_remove_all("I\\.\\s") %>% 
   str_replace_all("\\s\\d\\.\\s+", " ") %>% 
   str_replace_all("\\s•\\s", " ") %>% 
-  str_remove_all("1 Fuente de datos: Estadística General Penitenciaria\\. Unidad de Estadística\\. Gendarmería de Chile")
+  str_remove_all("1 Fuente de datos: Estadística General Penitenciaria\\. Unidad de Estadística\\. Gendarmería de Chile") 
 ```
 
-```{r 3_cleaning4|comparison, eval=FALSE, include=FALSE}
-speech_2018_modif1 <- speech_2018
-speech_2018_modif2 <- speech_2018 %>% 
-  str_remove_all("1 Fuente de datos: Estadística General Penitenciaria\\. Unidad de Estadística\\. Gendarmería de Chile")
-
-#diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
-diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
-```
 
 ```{r 3_cleaning4|additional_corrections}
 speech_2018 <- speech_2018 %>% 
@@ -567,6 +560,46 @@ Definimos algunas *stopwords* para descartar adicionalmente a las ya definidas y
 ```{r 5_two-words_analysis|more_stopwords}
 bi_stopwords <- tibble(palabra = c("cuenta", "pública")) 
 ```
+
+Luego, hacemos algunas correcciones adicionales.
+
+```{r 5_two-words_analysis|2021-2020_corrections}
+speech_2021 <- speech_2021 %>% 
+  str_remove_all("políticas,") %>% str_remove_all("planes") %>% str_remove_all("programas") %>% 
+  str_remove_all("Intrapenitenciaria") %>% str_remove_all("INTRAPENITENCIARIA") %>% 
+  stripWhitespace()
+```
+
+```{r 5_two-words_analysis|2021-2020_comparison, eval=FALSE, include=FALSE}
+speech_2021_modif1 <- speech_2021
+speech_2021_modif2 <- speech_2021
+  stripWhitespace()
+
+#diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+```
+
+```{r 5_two-words_analysis|2020-2019_corrections}
+speech_2020 <- speech_2020 %>% 
+  str_replace_all("\\Snidad \\Senal", "unidades penales")
+```
+
+```{r 5_two-words_analysis|2020-2019_comparison, eval=FALSE, include=FALSE}
+speech_2020_modif1 <- speech_2020
+speech_2020_modif2 <- speech_2020 %>% 
+  str_replace_all("\\Snidades \\Senales", "establecimientos penitenciarios")
+  #stripWhitespace()
+
+#diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
+diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
+```
+
+
+
+
+
+
+
 
 # Frecuencias
 
