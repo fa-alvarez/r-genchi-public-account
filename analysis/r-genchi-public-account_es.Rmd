@@ -65,7 +65,7 @@ speech_2018 <- speech_2018 %>%
 
 Los objetos en cada discurso quedaron separados, por lo que los unimos en un solo objeto por cada discurso.
 
-```{r 2_source_concatenating}
+```{r 2_source|concatenating}
 speech_2021 <- paste(speech_2021, collapse = " ")
 speech_2020 <- paste(speech_2020, collapse = " ")
 speech_2019 <- paste(speech_2019, collapse = " ")
@@ -115,8 +115,8 @@ speech_2021 <- speech_2021 %>%
   str_replace_all("Informe Ejecutivo", " ") %>% 
   str_replace_all("informe Resumen Ejecutivo", " ") %>% 
   str_replace_all("\\Snforme final", " ") %>% 
-  str_replace_all("\\Snforme.", " ") %>% 
-  stripWhitespace() # Remove unnecessary spaces
+  str_replace_all("\\Snforme.", " ")
+
 ```
 
 ```{r cleaning1|additional_corrections}
@@ -135,13 +135,15 @@ speech_2021 <- speech_2021 %>%
   str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
   str_remove_all("disponer") %>% 
   str_replace_all("pacientes", "paciente") %>% 
-  str_replace_all("PACIENTES", "paciente")
+  str_replace_all("PACIENTES", "paciente") %>% 
+  str_replace_all("paciente", "pacientes")
 ```
 
 ```{r 3_cleaning1|comparison, eval=FALSE, include=FALSE}
 speech_2021_modif1 <- speech_2021
 speech_2021_modif2 <- speech_2021 %>% 
-  str_replace_all("PACIENTES", "paciente")
+  str_replace_all("clínico", "clínica")
+  #stripWhitespace()
 
 #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
@@ -235,14 +237,19 @@ speech_2020 <- speech_2020 %>%
   str_replace_all("restricciones sanitarias", "restricción sanitaria") %>% 
   str_replace_all("sanitarias", "sanitaria") %>% 
   str_replace_all("Sanitarias", "sanitaria") %>% 
-  str_replace_all("contagios", "contagio") %>% 
+  str_replace_all("contagios", "contagio") %>% str_replace_all("contagio", "contagios") %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>%  
+  str_replace_all("lesión", "lesiones") %>% 
+  str_replace_all("Egresos", "egreso") %>% str_replace_all("egresos", "egreso") %>% 
+  str_replace_all("egreso", "egresos") %>% 
   stripWhitespace() 
+  
 ```
 
 ```{r 3_cleaning2|comparison, eval=FALSE, include=FALSE}
 speech_2020_modif1 <- speech_2020
 speech_2020_modif2 <- speech_2020 %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+  stripWhitespace() 
 
 #diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
@@ -320,13 +327,19 @@ speech_2019 <- speech_2019 %>%
   str_remove_all("mejorando") %>% 
   str_remove_all("desarrollar") %>% 
   str_remove_all("porcentaje") %>% 
-  stripWhitespace()
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
+  str_replace_all("\\Sstablecimientos", "establecimientos") %>% 
+  str_replace_all("\\Saborales", "laboral") %>% 
+  str_replace_all("\\Snternacionales", "internacional") %>% 
+  str_replace_all("\\s\\Sompras\\s", " compra ") %>% str_replace_all("\\s\\Sompra\\s", " compras ") %>% 
+  stripWhitespace() 
+
 ```
 
 ```{r 3_cleaning3|comparison, eval=FALSE, include=FALSE}
 speech_2019_modif1 <- speech_2019
 speech_2019_modif2 <- speech_2019 %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+  stripWhitespace() 
 
 #diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
@@ -359,30 +372,29 @@ Comenzamos eliminando las expresiones regulares para el Discurso 2018 y haciendo
 speech_2018 <- speech_2018 %>% 
   str_replace_all("\n", " ") %>% # Replace "\n" by space
   str_remove_all("\\s+Allanamientos\\s+.+854") %>% # Remove Tables
-  str_remove_all("\\s+PROGRAMApdf_documentS\\s+RE.+LACTANTES") %>% 
+  str_remove_all("\\s+PROGRAMAS\\s+REINSERCIÓN\\s.+\\sLACTANTES") %>% 
   str_remove_all("Distribución Regional.+NACIONAL\\s+43") %>% 
   str_remove_all("siguiente detalle.+Total\\s+305") %>% 
   str_remove_all("Aspirante Oficiales P.+327 Hombres\\)") %>% 
   str_remove_all("\\s+N° de horas.+ARAUCANÍA\\)") %>% 
-  str_remove_all("AÑO\\s+NOMBRE.+PUBLICA\\s+30") 
+  str_remove_all("AÑO\\s+NOMBRE.+PUBLICA\\s+30") %>% 
+  str_remove_all("II\\.\\s") %>% str_remove_all("I\\.\\s") %>% 
+  str_replace_all("\\s\\d\\.\\s+", " ") %>% 
+  str_replace_all("\\s•\\s", " ") %>% 
+  str_remove_all("1 Fuente de datos: Estadística General Penitenciaria\\. Unidad de Estadística\\. Gendarmería de Chile")
 ```
 
 ```{r 3_cleaning4|comparison, eval=FALSE, include=FALSE}
 speech_2018_modif1 <- speech_2018
 speech_2018_modif2 <- speech_2018 %>% 
-  str_remove_all("AÑO\\s+NOMBRE.+PUBLICA\\s+30") 
+  str_remove_all("1 Fuente de datos: Estadística General Penitenciaria\\. Unidad de Estadística\\. Gendarmería de Chile")
 
 #diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 ```
 
-
-
-
-
-
 ```{r 3_cleaning4|additional_corrections}
-speech_2018 <- speech_2018_temp %>% 
+speech_2018 <- speech_2018 %>% 
   str_remove_all("N°") %>% 
   str_replace_all("Departamento del Sistema Cerrado\\.", " ") %>% 
   str_replace_all("Departamento de Recursos Humanos", " ") %>% 
@@ -391,13 +403,17 @@ speech_2018 <- speech_2018_temp %>%
   str_replace_all("pesos\\.Reposición", "pesos Reposición") %>% 
   str_replace_all("incendios:Programa", "incendios Programa") %>% 
   str_replace_all("Coyhaique\\.Mantención", "Coyhaique Mantención") %>% 
-  stripWhitespace() 
+  str_replace_all("intervenidos", "intervenido") %>% str_replace_all("intervenido", "intervenidos") %>% 
+  str_replace_all("\\Sstablecimientos", "establecimientos") %>% 
+  str_replace_all("Laborales", "laboral") %>% 
+  stripWhitespace()  
+  
 ```
 
 ```{r 3_cleaning4|comparison, eval=FALSE, include=FALSE}
 speech_2018_modif1 <- speech_2018
 speech_2018_modif2 <- speech_2018 %>% 
-  str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+  stripWhitespace()  
 
 #diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
@@ -535,11 +551,11 @@ one_word_plot
 dev.off()
 ```
 
-En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la impartición de *diplomados* para el perfeccionamiento del personal.
+En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la política de protección de *armamento* en las unidades especiales.
 
-Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los establecimientos penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
+Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los *establecimientos* penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
 
-Vemos que el término *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de pandemia que comenzó en dicho año y el consecuente riesgo de *contagio*.  Por otro lado, se informa sobre la publicación de un estudio de reincidencia que consideró *egresos* de privados de libertad en el año 2016.  Además, se puso atención a la gran cantidad de detenidos durante el 2019 que fueron recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
+Vemos que el término *contagios* y *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de pandemia que comenzó en dicho año.  Por otro lado, se informa sobre la publicación de un estudio de reincidencia que consideró *egresos* de privados de libertad en el año 2016.  Además, se puso atención a la gran cantidad de detenidos durante el 2019 que fueron recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
 
 Por último, el discurso del 2021 enfatizó dos grandes temáticas.  La primera, relacionada con la salud *mental* y la derivación de posibles *pacientes* privados de libertad con necesidades de atención *clínica* psicológica en el ámbito de la *psicoterapia* individual.  Esto, en atención especialmente a que durante el 2020 se mantuvo el riesgo sanitario de pandemia.  El segundo tópico abordó el desarrollo de una Cuenta Pública *Participativa* con mayor inclusión social y con transmisión vía streaming por segundo año consecutivo.
 
