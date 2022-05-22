@@ -22,8 +22,7 @@ speech_2021 <- speech_2021 %>%
   str_replace_all("Informe Ejecutivo", " ") %>% 
   str_replace_all("informe Resumen Ejecutivo", " ") %>% 
   str_replace_all("\\Snforme final", " ") %>% 
-  str_replace_all("\\Snforme.", " ") %>% 
-  stripWhitespace() # Remove unnecessary spaces
+  str_replace_all("\\Snforme.", " ")
 
 
 # Speech 2021 (management 2020) Additional corrections --------------------
@@ -43,14 +42,17 @@ speech_2021 <- speech_2021 %>%
   str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
   str_remove_all("disponer") %>% 
   str_replace_all("pacientes", "paciente") %>% 
-  str_replace_all("PACIENTES", "paciente")
+  str_replace_all("PACIENTES", "paciente") %>% 
+  str_replace_all("paciente", "pacientes") %>% 
+  str_replace_all("clínico", "clínica") %>% 
+  stripWhitespace()
 
 
 # Speech 2021 (management 2020) Document version comparison ---------------
 
 # speech_2021_modif1 <- speech_2021
 # speech_2021_modif2 <- speech_2021 %>% 
-#   str_replace_all("PACIENTES", "paciente") 
+#   stripWhitespace()
 # 
 # #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 # diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")

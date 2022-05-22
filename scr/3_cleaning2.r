@@ -65,17 +65,21 @@ speech_2020 <- speech_2020 %>%
   str_replace_all("restricciones sanitarias", "restricción sanitaria") %>% 
   str_replace_all("sanitarias", "sanitaria") %>% 
   str_replace_all("Sanitarias", "sanitaria") %>% 
-  str_replace_all("contagios", "contagio") %>% 
+  str_replace_all("contagios", "contagio") %>% str_replace_all("contagio", "contagios") %>% 
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>%  
+  str_replace_all("lesión", "lesiones") %>% 
+  str_replace_all("Egresos", "egreso") %>% str_replace_all("egresos", "egreso") %>% 
+  str_replace_all("egreso", "egresos") %>% 
   stripWhitespace() 
 
 
-# # Speech 2020 (management 2019) Document version comparison ---------------
-# 
+# Speech 2020 (management 2019) Document version comparison ---------------
+ 
 # speech_2020_modif1 <- speech_2020
 # speech_2020_modif2 <- speech_2020 %>% 
-#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+#   stripWhitespace() 
 # 
-# #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
+# #diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 # diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 
 

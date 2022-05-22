@@ -44,7 +44,7 @@ pic_2018 <- frequencies_2018 %>%
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021)
 
 
-# TF-IDF Analysis - Save figure -------------------------------------------
+# Save frequencies figure -------------------------------------------------
 
 png("../figs/one-word_frequencies.png", width = 1344, height = 960)
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021) 
@@ -72,12 +72,13 @@ messages_tfidf <- bind_tf_idf(messages,
                               term = palabra, 
                               document = discurso,
                               n = n)
-head(messages_tfidf)
+head(messages_tfidf) 
 
 
 # TF-IDF Analysis - Plotting TF-IDF ---------------------------------------
 
-messages_tfidf %>%
+one_word_plot <-
+  messages_tfidf %>%
   group_by(discurso) %>%
   top_n(5) %>%
   ungroup %>%
@@ -90,5 +91,15 @@ messages_tfidf %>%
   scale_x_reordered() +
   scale_y_continuous(expand = c(0,0)) +
   labs(y = "tf-idf", x = NULL)
+one_word_plot
+
+
+# TF-IDF Analysis - Save plot ---------------------------------------------
+
+png("../figs/one-word_tf-idf.png", width = 1344, height = 960)
+one_word_plot
+dev.off()
+
+
 
 

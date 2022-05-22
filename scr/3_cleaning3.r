@@ -50,14 +50,19 @@ speech_2019 <- speech_2019 %>%
   str_remove_all("mejorando") %>% 
   str_remove_all("desarrollar") %>% 
   str_remove_all("porcentaje") %>% 
-  stripWhitespace()
+  str_remove_all("Departamento de Estadística y Estudios penitenciarios") %>% 
+  str_replace_all("\\Sstablecimientos", "establecimientos") %>% 
+  str_replace_all("\\Saborales", "laboral") %>% 
+  str_replace_all("\\Snternacionales", "internacional") %>% 
+  str_replace_all("\\s\\Sompras\\s", " compra ") %>% str_replace_all("\\s\\Sompra\\s", " compras ") %>% 
+  stripWhitespace() 
 
 
-# # Speech 2019 (management 2018) Document version comparison ---------------
-# 
+# Speech 2019 (management 2018) Document version comparison ---------------
+
 # speech_2019_modif1 <- speech_2019
 # speech_2019_modif2 <- speech_2019 %>% 
-#   str_remove_all("Departamento de Estadística y Estudios penitenciarios")  
+#   stripWhitespace() 
 # 
 # #diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 # diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")

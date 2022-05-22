@@ -31,10 +31,9 @@ speech_2018 <- paste(speech_2018, collapse = " ")
 
 # Preparing stopwords -----------------------------------------------------
 
-stopwords_es <- read_csv("../data/vacias.txt", col_names = TRUE, show_col_types = FALSE)
 # Stopwords in vacias.txt have been taken from:
 # https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt
-stopwords_es <- read_csv("data/vacias.txt", col_names = TRUE, show_col_types = FALSE)
+stopwords_es <- read_csv("../data/vacias.txt", col_names = TRUE, show_col_types = FALSE)
 my_stopwords <- tibble(palabra = c("mil", "millones", "año", "años", "chile", "dado", 
                                    "dar", "debido", "decir", "acerca", "pesos",
                                    "fin", "ser", "respecto", "debe", "gran", "tiene",
