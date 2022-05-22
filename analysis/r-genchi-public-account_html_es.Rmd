@@ -1,7 +1,7 @@
 ---
 title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
 author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez"
-date: "Primera edición: 09-11-2020 - Actualización: 08/05/2022"
+date: "Primera versión: 09-11-2020 - Actualización: 23/05/2022"
 output: html_document
 knit: (function(inputFile, encoding) {
   out_dir <- '../output/technical-reports';
@@ -544,35 +544,36 @@ one_word_plot
 dev.off()
 ```
 
-En el discurso del 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la política de protección de *armamento* en las unidades especiales.
+En el discurso de la Cuenta Pública Participativa (C.P.P.) 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la política de protección de *armamento* en las unidades especiales.
 
-Durante el 2019, el discurso se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los *establecimientos* penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
+Durante el 2019, el discurso de la C.P.P. se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los *establecimientos* penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
 
 Vemos que el término *contagios* y *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de pandemia que comenzó en dicho año.  Por otro lado, se informa sobre la publicación de un estudio de reincidencia que consideró *egresos* de privados de libertad en el año 2016.  Además, se puso atención a la gran cantidad de detenidos durante el 2019 que fueron recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
 
-Por último, el discurso del 2021 enfatizó dos grandes temáticas.  La primera, relacionada con la salud *mental* y la derivación de posibles *pacientes* privados de libertad con necesidades de atención *clínica* psicológica en el ámbito de la *psicoterapia* individual.  Esto, en atención especialmente a que durante el 2020 se mantuvo el riesgo sanitario de pandemia.  El segundo tópico abordó el desarrollo de una Cuenta Pública *Participativa* con mayor inclusión social y con transmisión vía streaming por segundo año consecutivo.
+Por último, el discurso del 2021 de la C.P.P. enfatizó dos grandes temáticas.  La primera, relacionada con la salud *mental* y la derivación de posibles *pacientes* privados de libertad con necesidades de atención *clínica* psicológica en el ámbito de la *psicoterapia* individual.  Esto, en atención especialmente a que durante el 2020 se mantuvo el riesgo sanitario de pandemia.  El segundo tópico abordó el desarrollo de una Cuenta Pública *Participativa* con mayor inclusión social y con transmisión vía streaming por segundo año consecutivo.
 
 
 # Análisis por bigramas
 
-Definimos algunas *stopwords* para descartar adicionalmente a las ya definidas y calculamos la frecuencia de los bigramas para cada documento.
+Definimos algunas *stopwords* para descartar adicionalmente a las ya definidas, realizamos algunas correcciones adicionales y calculamos la frecuencia de los bigramas para cada documento.
 
 ```{r 5_two-words_analysis|more_stopwords}
-bi_stopwords <- tibble(palabra = c("cuenta", "pública")) 
+bi_stopwords <- tibble(palabra = c("cuenta", "cuentas", "deberán", "realizar", "diferentes")) 
 ```
-
-Luego, hacemos algunas correcciones adicionales.
 
 ```{r 5_two-words_analysis|2021-2020_corrections}
 speech_2021 <- speech_2021 %>% 
   str_remove_all("políticas,") %>% str_remove_all("planes") %>% str_remove_all("programas") %>% 
   str_remove_all("Intrapenitenciaria") %>% str_remove_all("INTRAPENITENCIARIA") %>% 
+  str_replace_all("\\Snidad \\Senal", "establecimientos penitenciarios") %>% 
+  str_replace_all("del establecimiento", "de los establecimientos penitenciarios") %>% 
+  str_remove_all("\\Suenta \\Sública \\Sarticipativa") %>% 
   stripWhitespace()
 ```
 
 ```{r 5_two-words_analysis|2021-2020_comparison, eval=FALSE, include=FALSE}
 speech_2021_modif1 <- speech_2021
-speech_2021_modif2 <- speech_2021
+speech_2021_modif2 <- speech_2021 %>% 
   stripWhitespace()
 
 #diffObj(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
@@ -581,29 +582,93 @@ diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 
 ```{r 5_two-words_analysis|2020-2019_corrections}
 speech_2020 <- speech_2020 %>% 
-  str_replace_all("\\Snidad \\Senal", "unidades penales")
+  str_replace_all("\\Snidad \\Senal", "unidades penales") %>% 
+  str_replace_all("\\Snidades \\Senales", "establecimientos penitenciarios") %>% 
+  str_replace_all("visita virtuales", "visitas virtuales") %>% 
+  str_replace_all("visita virtual", "visitas virtuales") %>% 
+  str_replace_all("espacio físico", "espacios físicos") %>% 
+  str_replace_all("\\Sstablecimiento \\Senitenciario", "establecimientos penitenciarios") %>% 
+  str_replace_all("establecimiento penal", "establecimientos penitenciarios") %>% 
+  str_replace_all("teléfono celular", "teléfonos móviles") %>% 
+  str_replace_all("teléfono móvil", "teléfonos móviles") %>% 
+  str_remove_all("Centro de Estudios Justicia & Sociedad") %>% 
+  stripWhitespace()
 ```
 
 ```{r 5_two-words_analysis|2020-2019_comparison, eval=FALSE, include=FALSE}
 speech_2020_modif1 <- speech_2020
 speech_2020_modif2 <- speech_2020 %>% 
-  str_replace_all("\\Snidades \\Senales", "establecimientos penitenciarios")
-  #stripWhitespace()
+  stripWhitespace()
 
 #diffObj(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 ```
 
+```{r 5_two-words_analysis|2019-2018_corrections}
+speech_2019 <- speech_2019 %>% 
+  str_remove_all("igual forma") %>% 
+  str_remove_all("Centro de Cumplimiento Penitenciario") %>% 
+  str_remove_all("Centros de Cumplimiento Penitenciario") %>% 
+  str_replace_all("unidades penales", "establecimientos penitenciarios") %>% 
+  str_replace_all("unidad penal", "establecimientos penitenciarios") %>% 
+  str_replace_all("\\Sstablecimiento \\Senal", "establecimientos penitenciarios") %>% 
+  str_replace_all("\\Sstablecimientos \\Senales", "establecimientos penitenciarios") %>% 
+  str_replace_all("diferentes penales", "diferentes establecimientos penitenciarios") %>% 
+  str_replace_all("\\Sirección \\Segional", "direcciones regionales") %>% 
+  stripWhitespace()
+```
+
+```{r 5_two-words_analysis|2019-2018_comparison, eval=FALSE, include=FALSE}
+speech_2019_modif1 <- speech_2019
+speech_2019_modif2 <- speech_2019 %>% 
+  stripWhitespace()
+
+#diffObj(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
+diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
+```
+
+```{r 5_two-words_analysis|2018-2017_corrections}
+speech_2018 <- speech_2018 %>% 
+  str_replace_all("establecimiento penitenciario", "establecimientos penitenciarios") %>% 
+  str_replace_all("establecimientos penales", "establecimientos penitenciarios") %>% 
+  str_replace_all("algunos establecimientos", "algunos establecimientos penitenciarios") %>% 
+  str_replace_all("73 establecimientos", "73 establecimientos penitenciarios") %>% 
+  str_replace_all("prohibidas en establecimientos", "prohibidas en establecimientos penitenciarios") %>% 
+  str_replace_all("establecimientos institucionales", "establecimientos penitenciarios") %>% 
+  str_replace_all("condena en establecimientos", "condena en establecimientos penitenciarios") %>% 
+  str_replace_all("otros establecimientos", "otros establecimientos penitenciarios") %>% 
+  str_replace_all("últimos establecimientos", "últimos establecimientos penitenciarios") %>% 
+  str_replace_all("equipamiento del establecimiento", "equipamiento de establecimientos penitenciarios") %>% 
+  str_replace_all("nuevo establecimiento", "nuevos establecimientos penitenciarios") %>% 
+  str_replace_all("tener un establecimiento", "tener establecimientos penitenciarios") %>% 
+  str_replace_all("10 establecimientos", "10 establecimientos penitenciarios") %>% 
+  str_remove_all("Departamento del \\Sistema \\Serrado") %>% 
+  str_replace_all("\\s\\Sistema \\Serrado", " subsistema cerrado") %>% 
+  str_replace_all("unidades penales", "establecimientos penitenciarios") %>% 
+  str_remove_all("siguientes iniciativas") %>% 
+  str_replace_all("direcciones técnicas regionales", "unidades técnicas") %>%
+  str_replace_all("unidades técnicas regionales", "unidades técnicas") %>% 
+  str_replace_all("\\s\\Sonvenio\\s", " convenios suscritos ") %>% 
+  str_replace_all("convenios con", "convenios suscritos con") %>% 
+  str_replace_all("convenios en", "convenios suscritos en") %>% 
+  str_replace_all("de allanamiento en", "de allanamientos simultáneos en") %>% 
+  str_replace_all("estos allanamientos", "estos allanamientos simultáneos") %>% 
+  stripWhitespace()
+```
+
+```{r 5_two-words_analysis|2018-2017_comparison, eval=FALSE, include=FALSE}
+speech_2018_modif1 <- speech_2018
+speech_2018_modif2 <- speech_2018 %>% 
+  stripWhitespace()
+
+#diffObj(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
+```
 
 
+## Frecuencias
 
-
-
-
-
-# Frecuencias
-
-```{r 5_two-words_analysis|bigram_frequencies_2021}
+```{r 5_two-words_analysis|bigram_frequencies_2021-2020}
 bigram_2021 <- speech_2021 %>% 
   tibble(speech = speech_2021) %>% 
   unnest_tokens(input = speech,
@@ -626,7 +691,7 @@ bigram_2021 <- speech_2021 %>%
 head(bigram_2021)
 ```
 
-```{r 5_two-words_analysis|bigram_frequencies_2020}
+```{r 5_two-words_analysis|bigram_frequencies_2020-2019}
 bigram_2020 <- speech_2020 %>% 
   tibble(speech = speech_2020) %>% 
   unnest_tokens(input = speech,
@@ -649,7 +714,7 @@ bigram_2020 <- speech_2020 %>%
 head(bigram_2020)
 ```
 
-```{r 5_two-words_analysis|bigram_frequencies_2019}
+```{r 5_two-words_analysis|bigram_frequencies_2019-2018}
 bigram_2019 <- speech_2019 %>% 
   tibble(speech = speech_2019) %>% 
   unnest_tokens(input = speech,
@@ -672,7 +737,7 @@ bigram_2019 <- speech_2019 %>%
 head(bigram_2019)
 ```
 
-```{r 5_two-words_analysis|bigram_frequencies_2018}
+```{r 5_two-words_analysis|bigram_frequencies_2018-2017}
 bigram_2018 <- speech_2018 %>% 
   tibble(speech = speech_2018) %>% 
   unnest_tokens(input = speech,
@@ -742,10 +807,74 @@ fig_2018 <- bigram_2018 %>%
 (fig_2018 + fig_2019) / (fig_2020 + fig_2021)
 ```
 
+```{r 5_two-words_analysis|frequencies_fig, include=FALSE}
+png("../figs/two-words_frequencies.png", width = 1344, height = 960)
+(fig_2018 + fig_2019) / (fig_2020 + fig_2021)
+dev.off()
+```
 
 
+## Análisis TF-IDF
 
+Juntamos las frecuencias de los bigramas en un solo data frame, identificando a qué discurso pertenece.
 
+```{r 5_two-words_analysis|TF-IDF-one_data_frame}
 
+frequencies_2021 <- bigram_2021 %>% 
+  mutate(discurso = "C.P.P. 2021", .before = palabra) 
+frequencies_2020 <- bigram_2020 %>% 
+  mutate(discurso = "C.P.P. 2020", .before = palabra) 
+frequencies_2019 <- bigram_2019 %>% 
+  mutate(discurso = "C.P.P. 2019", .before = palabra) 
+frequencies_2018 <- bigram_2018 %>% 
+  mutate(discurso = "C.P.P. 2018", .before = palabra) 
 
+messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020, frequencies_2021)
+head(messages)
+```
 
+Calculamos las frecuencias inversas de los bigramas.
+
+```{r 5_two-words_analysis|TF-IDF_inverse_document_frequency}
+messages_tfidf <- bind_tf_idf(messages, 
+                              term = palabra, 
+                              document = discurso,
+                              n = n)
+head(messages_tfidf) 
+```
+
+Y hacemos la comparación gráfica.
+
+```{r 5_two-words_analysis|TF-IDF_plotting_TF-IDF, message=FALSE}
+two_words_plot <-
+  messages_tfidf %>%
+    group_by(discurso) %>%
+    top_n(5) %>%
+    ungroup %>%
+    mutate(discurso = as.factor(discurso),
+           palabra = reorder_within(palabra, tf_idf, discurso)) %>%
+    ggplot(aes(palabra, tf_idf, fill = discurso)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~discurso, scales = "free_y") +
+    coord_flip() +
+    scale_x_reordered() +
+    scale_y_continuous(expand = c(0,0)) +
+    labs(y = "tf-idf", x = NULL)
+two_words_plot
+```
+
+```{r 5_two-words_analysis|TF-IDF_plotting_fig, include=FALSE}
+png("../figs/two-words_tf-idf.png", width = 1344, height = 960)
+two_words_plot
+dev.off()
+```
+
+El discurso de la Cuenta Pública Participativa (C.P.P.) del año 2018 destacó la ejecución de actividades mediante *convenios suscritos* en 2017 con diversas entidades públicas, corporaciones, fundaciones y universidades, tanto a nivel central como regional, gestionadas e implementadas por las distintas *unidades técnicas* regionales y de los establecimientos penitenciarios.  Durante este año se desarrollaron *allanamientos simultáneos* en diversas regiones, permitiendo incautar variadas especies ilícitas y prohibidas.
+
+En el discurso del 2019, se enfatizó la coordinación de las *direcciones regionales* con las unidades de los subsistemas cerrado, abierto y postpenitenciario, con el fin de realizar actividades conjuntas para la vinculación público-privada.  Otras de las actividades realizadas en 2018 estuvieron en el ámbito de los *Derechos Humanos* a través de capacitación a funcionarios y actualización de resoluciones y actos administrativos.  También hubo ejecución de proyectos para implementar, ampliar, reponer y mantener equipos de *seguridad electrónica*, con el objetivo de complementar la vigilancia perimetral humana.
+
+El análisis de bigramas destaca nuevamente que el discurso de la C.P.P. 2020 se centró en la situación pandémica por *covid 19* y en algunas las acciones tomadas a consecuencia de ella, tales como la implementación de salas para *visitas virtuales*, permitir el uso limitado de *teléfonos móviles* para la comunicación de los internos con sus familiares y la reubicación de internos para disminuir la probabilidad de contagios por falta de *espacios físicos* y su sanitización.
+
+Finalmente, en el discurso del 2021 se abordaron las actividades realizadas en 2020 de *atención clínica* y derivación de pacientes por *salud mental* en contexto de pandemia.  Por otro lado, se destacó la participación de la ciudadanía en la estructura y contenido del *resumen ejecutivo* de la C.P.P., y su disponibilidad para descargar desde la *web institucional*.  También se respondió una consulta ciudadana sobre el programa *Abriendo Caminos* del Ministerio de Desarrollo Social.
+
+-- *Nota: a la fecha de publicación de este proyecto la C.P.P. 2022 respecto de la gestión 2021 aún se encontraba en desarrollo por parte de Gendarmería de Chile.*
