@@ -1,8 +1,8 @@
 ---
 title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
 subtitle: "Informe Ejecutivo"
-author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez"
-date: "Primera versión: 09-11-2020 - Actualización: 23/05/2022"
+author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez"
+date: "Primera versión: 09-11-2020 - Última Actualización: 23/05/2022"
 output: pdf_document
 header-includes:
   - \DeclareUnicodeCharacter{001F}{}
@@ -446,7 +446,7 @@ pic_2018 <- frequencies_2018 %>%
 ```
 
 ```{r 4_one-word_analysis|frequencies_fig, include=FALSE}
-png("../figs/one-word_frequencies.png", width = 1344, height = 960)
+png("../figs/one-word_frequencies_es.png", width = 1344, height = 960)
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021)
 dev.off()
 ```
@@ -500,7 +500,7 @@ one_word_plot
 ```
 
 ```{r 4_one-word_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/one-word_tf-idf.png", width = 1344, height = 960)
+png("../figs/one-word_tf-idf_es.png", width = 1344, height = 960)
 one_word_plot
 dev.off()
 ```
@@ -772,7 +772,7 @@ fig_2018 <- bigram_2018 %>%
 ```
 
 ```{r 5_two-words_analysis|frequencies_fig, include=FALSE}
-png("../figs/two-words_frequencies.png", width = 1344, height = 960)
+png("../figs/two-words_frequencies_es.png", width = 1344, height = 960)
 (fig_2018 + fig_2019) / (fig_2020 + fig_2021)
 dev.off()
 ```
@@ -827,7 +827,7 @@ two_words_plot
 ```
 
 ```{r 5_two-words_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/two-words_tf-idf.png", width = 1344, height = 960)
+png("../figs/two-words_tf-idf_es.png", width = 1344, height = 960)
 two_words_plot
 dev.off()
 ```

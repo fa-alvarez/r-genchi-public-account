@@ -1,8 +1,8 @@
 ---
 title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
 subtitle: "Informe Técnico"
-author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez"
-date: "Primera versión: 09-11-2020 - Actualización: 23/05/2022"
+author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez"
+date: "Primera versión: 09-11-2020 - Última Actualización: 23/05/2022"
 output: html_document
 knit: (function(inputFile, encoding) {
   out_dir <- '../output/technical-reports';
@@ -95,7 +95,7 @@ Revisamos expresiones regulares y palabras vacías para descartar del documento.
 
 ### Discurso 2021 (Gestión 2020)
 
-Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.
+Comenzamos eliminando las expresiones regulares para el Discurso 2021 y haciendo algunas correcciones.
 
 ```{r 3_cleaning1|regular_expressions_2021_2020}
 speech_2021 <- speech_2021 %>%
@@ -437,7 +437,7 @@ head(frequencies_2018)
 
 # Análisis por palabra
 
-Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF.  Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos.
+Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF.  Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos.  Permite responder a la pregunta ¿qué conceptos de una palabra resaltan en un discurso respecto del resto?
 
 ## Frecuencias
 
@@ -488,7 +488,7 @@ pic_2018 <- frequencies_2018 %>%
 ```
 
 ```{r 4_one-word_analysis|frequencies_fig, include=FALSE}
-png("../figs/one-word_frequencies.png", width = 1344, height = 960)
+png("../figs/one-word_frequencies_es.png", width = 1344, height = 960)
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021) 
 dev.off()
 ```
@@ -543,7 +543,7 @@ one_word_plot
 ```
 
 ```{r 4_one-word_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/one-word_tf-idf.png", width = 1344, height = 960)
+png("../figs/one-word_tf-idf_es.png", width = 1344, height = 960)
 one_word_plot
 dev.off()
 ```
@@ -812,7 +812,7 @@ fig_2018 <- bigram_2018 %>%
 ```
 
 ```{r 5_two-words_analysis|frequencies_fig, include=FALSE}
-png("../figs/two-words_frequencies.png", width = 1344, height = 960)
+png("../figs/two-words_frequencies_es.png", width = 1344, height = 960)
 (fig_2018 + fig_2019) / (fig_2020 + fig_2021)
 dev.off()
 ```
@@ -868,7 +868,7 @@ two_words_plot
 ```
 
 ```{r 5_two-words_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/two-words_tf-idf.png", width = 1344, height = 960)
+png("../figs/two-words_tf-idf_es.png", width = 1344, height = 960)
 two_words_plot
 dev.off()
 ```
