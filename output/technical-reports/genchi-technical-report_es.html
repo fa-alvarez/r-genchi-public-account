@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez" />
+<meta name="author" content="Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez" />
 
 
 <title>Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020</title>
@@ -166,8 +166,8 @@ pre code {
 
 <h1 class="title toc-ignore"><strong>Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020</strong></h1>
 <h3 class="subtitle">Informe Técnico</h3>
-<h4 class="author">Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez</h4>
-<h4 class="date">Primera versión: 09-11-2020 - Actualización: 23/05/2022</h4>
+<h4 class="author">Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez</h4>
+<h4 class="date">Primera versión: 09-11-2020 - Última Actualización: 23/05/2022</h4>
 
 </div>
 
@@ -215,7 +215,7 @@ more_stopwords &lt;- tibble(palabra = c(&quot;cdp&quot;, &quot;cerrado&quot;, &q
 <p>Revisamos expresiones regulares y palabras vacías para descartar del documento.</p>
 <div id="discurso-2021-gestión-2020" class="section level3">
 <h3>Discurso 2021 (Gestión 2020)</h3>
-<p>Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.</p>
+<p>Comenzamos eliminando las expresiones regulares para el Discurso 2021 y haciendo algunas correcciones.</p>
 <pre class="r"><code>speech_2021 &lt;- speech_2021 %&gt;%
   str_replace_all(&quot;\n&quot;, &quot; &quot;) %&gt;% # Replace &quot;\n&quot; by space
   str_remove_all(&quot;“&quot;) %&gt;% str_remove_all(&quot;”&quot;) %&gt;% # Remove &quot;&quot; 
@@ -553,7 +553,7 @@ head(frequencies_2018)</code></pre>
 </div>
 <div id="análisis-por-palabra" class="section level1">
 <h1>Análisis por palabra</h1>
-<p>Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF. Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos.</p>
+<p>Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF. Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos. Permite responder a la pregunta ¿qué conceptos de una palabra resaltan en un discurso respecto del resto?</p>
 <div id="frecuencias" class="section level2">
 <h2>Frecuencias</h2>
 <p>Graficamos las palabras más frecuentes de cada discurso.</p>
