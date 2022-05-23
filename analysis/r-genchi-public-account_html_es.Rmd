@@ -1,5 +1,6 @@
 ---
 title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
+subtitle: "Informe Técnico"
 author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualización: Fabián Álvarez"
 date: "Primera versión: 09-11-2020 - Actualización: 23/05/2022"
 output: html_document
@@ -33,9 +34,12 @@ library(diffobj)
 
 # Introducción
 
-Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retroalimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
+Las Cuentas Públicas Participativas (C.P.P.) son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retroalimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
 
 Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019, 2020 y 2021 (gestión 2017, 2018, 2019 y 2020, respectivamente).
+
+-- *Nota: a la fecha de publicación de este proyecto, la C.P.P. del presente año 2022 (gestión 2021) aún se encuentra en desarrollo por parte de Gendarmería de Chile por lo que no se incluye en este análisis.*
+
 
 # Lectura y limpieza de archivos
 
@@ -119,7 +123,7 @@ speech_2021 <- speech_2021 %>%
 
 ```
 
-```{r cleaning1|additional_corrections}
+```{r 3_cleaning1|additional_corrections}
 speech_2021 <- speech_2021 %>% 
   str_replace_all("Cuentas Públicas Participativas", "Cuenta Pública Participativa ") %>% 
   str_replace_all("cuentas públicas", "cuenta pública") %>% 
@@ -437,7 +441,7 @@ Primero calculamos y graficamos las palabras más frecuentes en cada discurso pa
 
 ## Frecuencias
 
-Graficamos las 10 palabras más frecuentes de cada discurso.
+Graficamos las palabras más frecuentes de cada discurso.
 
 ```{r 4_one-word_analysis|frequencies}
 pic_2021 <- frequencies_2021 %>% 
@@ -877,4 +881,4 @@ El análisis de bigramas destaca nuevamente que el discurso de la C.P.P. 2020 se
 
 Finalmente, en el discurso del 2021 se abordaron las actividades realizadas en 2020 de *atención clínica* y derivación de pacientes por *salud mental* en contexto de pandemia.  Por otro lado, se destacó la participación de la ciudadanía en la estructura y contenido del *resumen ejecutivo* de la C.P.P., y su disponibilidad para descargar desde la *web institucional*.  También se respondió una consulta ciudadana sobre el programa *Abriendo Caminos* del Ministerio de Desarrollo Social.
 
--- *Nota: a la fecha de publicación de este proyecto la C.P.P. 2022 respecto de la gestión 2021 aún se encontraba en desarrollo por parte de Gendarmería de Chile.*
+
