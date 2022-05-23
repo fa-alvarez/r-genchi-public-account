@@ -546,12 +546,10 @@
     },
     "readr": {
       "Package": "readr",
-      "Version": "2.1.1",
-      "Source": "Local",
+      "Version": "2.1.2",
+      "Source": "Repository",
       "Repository": "CRAN",
-      "RemoteType": "local",
-      "RemoteUrl": "/usr/lib/R/site-library/readr",
-      "Hash": "a5a00e4c29e048912c2417253723e57d",
+      "Hash": "9c59de1357dc209868b5feb5c9f0fe2f",
       "Requirements": [
         "R6",
         "cli",
