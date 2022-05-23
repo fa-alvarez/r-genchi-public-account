@@ -39,6 +39,8 @@ Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinc
 
 Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019, 2020 y 2021 (gestión 2017, 2018, 2019 y 2020, respectivamente).
 
+Gendarmería de Chile es un Servicio Público, dependiente del Ministerio de Justicia y Derechos Humanos, cuya misión es contribuir a una sociedad más segura, garantizando el cumplimiento eficaz de la prisión preventiva y de las penas privativas o restrictivas de libertad a quienes los tribunales determinen, proporcionando a los afectados condiciones y prestaciones, acorde a su calidad de persona y a los estándares de derechos humanos, desarrollando programas de reinserción social que tiendan a disminuir las probabilidades de reincidencia delictual y promoviendo la eliminación de antecedentes penales como parte del proceso de reinserción.
+
 -- *Nota: a la fecha de publicación de este proyecto, la C.P.P. del presente año 2022 (gestión 2021) aún se encuentra en desarrollo por parte de Gendarmería de Chile por lo que no se incluye en este análisis.*
 
 
@@ -836,7 +838,7 @@ El discurso de la Cuenta Pública Participativa (C.P.P.) del año 2018 destacó 
 
 En el discurso del 2019, se enfatizó la coordinación de las *direcciones regionales* con las unidades de los subsistemas cerrado, abierto y postpenitenciario, con el fin de realizar actividades conjuntas para la vinculación público-privada.  Otras de las actividades realizadas en 2018 estuvieron en el ámbito de los *Derechos Humanos* a través de capacitación a funcionarios y actualización de resoluciones y actos administrativos.  También hubo ejecución de proyectos para implementar, ampliar, reponer y mantener equipos de *seguridad electrónica*, con el objetivo de complementar la vigilancia perimetral humana.
 
-El análisis de bigramas destaca nuevamente que el discurso de la C.P.P. 2020 se centró en la situación pandémica por *covid 19* y en algunas las acciones tomadas a consecuencia de ella, tales como la implementación de salas para *visitas virtuales*, permitir el uso limitado de *teléfonos móviles* para la comunicación de los internos con sus familiares y la reubicación de internos para disminuir la probabilidad de contagios por falta de *espacios físicos* y su sanitización.
+El análisis de bigramas destaca nuevamente que el discurso de la C.P.P. 2020 se centró en la situación pandémica por *covid 19* y en algunas de las acciones tomadas a consecuencia de ella, tales como la implementación de salas para *visitas virtuales*, permitir el uso limitado de *teléfonos móviles* para la comunicación de los internos con sus familiares y la reubicación de internos para disminuir la probabilidad de contagios por falta de *espacios físicos* y su sanitización.
 
 Finalmente, en el discurso del 2021 se abordaron las actividades realizadas en 2020 de *atención clínica* y derivación de pacientes por *salud mental* en contexto de pandemia.  Por otro lado, se destacó la participación de la ciudadanía en la estructura y contenido del *resumen ejecutivo* de la C.P.P., y su disponibilidad para descargar desde la *web institucional*.  También se respondió una consulta ciudadana sobre el programa *Abriendo Caminos* del Ministerio de Desarrollo Social.
 
