@@ -2,7 +2,7 @@
 title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
 subtitle: "Informe Ejecutivo"
 author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez"
-date: "Primera versión: 09-11-2020 - Última Actualización: 23/05/2022"
+date: "Primera versión: 09-11-2020 - Última Actualización: 25/05/2022"
 output: pdf_document
 header-includes:
   - \DeclareUnicodeCharacter{001F}{}
