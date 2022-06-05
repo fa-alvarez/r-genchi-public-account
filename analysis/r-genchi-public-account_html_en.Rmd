@@ -1,14 +1,14 @@
 ---
-title: "**Análisis de texto de las Cuentas Públicas Participativas de la gestión de Gendarmería de Chile entre los años 2017 y 2020**"
-subtitle: "Informe Técnico"
-author: "Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez"
-date: "Primera versión: 09/11/2020 - Última Actualización: 25/05/2022"
+title: "**Text analysis of the Participatory Public Accounts of the management of Gendarmería de Chile between the years 2017 and 2020**"
+subtitle: "Technical Report"
+author: "Authors: Fabián Álvarez / Roberto Rodríguez - Updated by: Fabián Álvarez"
+date: "1st version: 09/11/2020 - Last Update: 25/05/2022"
 output: html_document
 knit: (function(inputFile, encoding) {
   out_dir <- '../output/technical-reports';
   rmarkdown::render(inputFile,
     encoding=encoding,
-    output_file=file.path(dirname(inputFile), out_dir, 'genchi-technical-report_es.html')
+    output_file=file.path(dirname(inputFile), out_dir, 'genchi-technical-report_en.html')
     )
   })
 ---
@@ -30,23 +30,24 @@ library(stringr)
 library(readr)
 library(ggplot2)
 library(diffobj)
+library(googleLanguageR)
 ```
 
-# Introducción
+# Introduction
 
-Las Cuentas Públicas Participativas (C.P.P.) son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retroalimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
+The Participatory Public Accounts (P.P.A.) are open dialogue mechanisms that link the authorities of the State Administration bodies with citizenship and aim to inform about the management of public policies carried out, generate a feedback process that allows collecting the concerns and contributions of its participants and give an organized response to consultations arising in the process.
 
-Para este análisis se aplican técnicas de análisis de texto en R a las cuentas públicas de Gendarmería de Chile correspondientes a los años 2018, 2019, 2020 y 2021 (gestión 2017, 2018, 2019 y 2020, respectivamente).
+For this analysis, text analysis techniques are applied in R language to the public accounts of Gendarmería de Chile corresponding to the years 2018, 2019, 2020 and 2021 (2017, 2018, 2019 and 2020, respectively).
 
-Gendarmería de Chile es un Servicio Público, dependiente del Ministerio de Justicia y Derechos Humanos, cuya misión es contribuir a una sociedad más segura, garantizando el cumplimiento eficaz de la prisión preventiva y de las penas privativas o restrictivas de libertad a quienes los tribunales determinen, proporcionando a los afectados condiciones y prestaciones, acorde a su calidad de persona y a los estándares de derechos humanos, desarrollando programas de reinserción social que tiendan a disminuir las probabilidades de reincidencia delictual y promoviendo la eliminación de antecedentes penales como parte del proceso de reinserción.
+Gendarmerie de Chile is a Public Service, under the Ministry of Justice and Human Rights of the State of Chile, whose mission is to contribute to a safer society, guaranteeing the effective fulfillment of preventive detention and liberty deprivation or restriction sentences to whom the courts determine, providing conditions and benefits to the affected ones according to their quality as a person and to the human rights standards, developing social reintegration programs that tend to reduce the probabilities of criminal recidivism and promoting the elimination of criminal record as part of the reintegration process.
 
--- *Nota: a la fecha de publicación de este proyecto, la C.P.P. del presente año 2022 (gestión 2021) aún se encuentra en desarrollo por parte de Gendarmería de Chile por lo que no se incluye en este análisis.*
+-- *Note: At the date of publication of this project, the P.P.A. of this year 2022 (management 2021) is still in development by Gendarmería de Chile, thus it is not included in this analysis.*
 
--- *Nota: para versión en inglés de este reporte se utilizó la API de Google Cloud Translation.  Para ejecutar el análisis en esta versión es necesario crear una variable de entorno R llamada GL_AUTH que contenga la ruta del archivo en formato json con la llave de la API.  Para obtener la llave se debe crear una cuenta en la Plataforma de Google Cloud y una Cuenta de Servicio para traducción.*
+-- *Note: an API from Google Cloud Translation was used for the english version of this report.  To run this version you need to create an R environment variable called GL_AUTH which includes the json file path with the API key. To get the key you must create a Google Cloud Platform account and a Service Account for translation purposes.*
 
-# Lectura y limpieza de archivos
+# Reading and cleaning files
 
-Primero, leemos la fuente de los datos que, en nuestro caso, se trata de archivos en formato pdf.  
+First, we read the data source.  In our case, these are files in PDF format.
 
 ```{r 2_source|reading}
 speech_2021 <- pdf_text("../data/discurso_2021_2020.pdf")
@@ -55,7 +56,7 @@ speech_2019 <- pdf_text("../data/discurso_2019_2018.pdf")
 speech_2018 <- pdf_text("../data/discurso_2018_2017.pdf")
 ```
 
-Luego, eliminamos las primeras páginas de los discursos ya que contienen elementos que no forman parte de la cuenta pública. Lo mismo hacemos para las últimas páginas; en ambos casos, solo cuando corresponda.
+Then, we eliminate the first pages of the speeches since they contain elements that are not part of the public account. We do the same for the last pages.  In both cases, only when appropriate.
 
 ```{r 2_source|removing_pages}
 speech_2021 <- speech_2021 %>% 
@@ -70,7 +71,7 @@ speech_2018 <- speech_2018 %>%
   .[-1]
 ```
 
-Los objetos en cada discurso quedaron separados, por lo que los unimos en un solo objeto por cada discurso.
+The objects in each speech are separated, so we join them into one object for each speech.
 
 ```{r 2_source|concatenating}
 speech_2021 <- paste(speech_2021, collapse = " ")
@@ -79,7 +80,7 @@ speech_2019 <- paste(speech_2019, collapse = " ")
 speech_2018 <- paste(speech_2018, collapse = " ")
 ```
 
-Las *stopwords* o *palabras vacías* son aquellas palabras que no tienen significado por sí mismas.  Solo modifican o acompañan a otras, por lo cual debemos quitarlas para el análisis.  Para ello, tomamos las palabras desde el repositorio [AnaText](https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt) que ya hemos descargado previamente.  Agregamos palabras adicionales que vayamos encontrando irrelevantes.
+The *stopwords* are those words that have no meaning for themselves. They only modify or join others, so we must remove them for the analysis.  To do this, we take words from the [Anatext](https://github.com/7PartidasDigital/AnaText/blob/master/datos/diccionarios/vacias.txt) repository that we have already downloaded previously. And we add additional words that we might find irrelevant.
 
 ```{r 2_source|stopwords, message=FALSE}
 stopwords_es <- read_csv("../data/vacias.txt", col_names = TRUE, show_col_types = FALSE)
@@ -92,13 +93,13 @@ more_stopwords <- tibble(palabra = c("cdp", "cerrado", "gendarmería", "fecha", 
                                      "diferentes", "impacta", "enfocar", "deberá"))
 ```
 
-## Expresiones Regulares y Palabras Vacías (*stopwords*)
+## Regular Expressions and Stopwords
 
-Revisamos expresiones regulares y palabras vacías para descartar del documento.
+We search for regular expressions and stopwords to be discarded from the document.
 
-### Discurso 2021 (Gestión 2020)
+### Speech 2021 (Management 2020)
 
-Comenzamos eliminando las expresiones regulares para el Discurso 2021 y haciendo algunas correcciones.
+We start dropping regular expressions from Speech 2021 and making some corrections.
 
 ```{r 3_cleaning1|regular_expressions_2021_2020}
 speech_2021 <- speech_2021 %>%
@@ -157,7 +158,7 @@ speech_2021_modif2 <- speech_2021 %>%
 diffChr(speech_2021_modif1, speech_2021_modif2, mode="sidebyside")
 ```
 
-Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
+We turn the speech into a dataframe, separate its words and calculate its frequencies.
 
 ```{r 3_cleaning1|first_frequencies_2021_2020}
 frequencies_2021 <- tibble(speech = speech_2021) %>% 
@@ -166,7 +167,7 @@ frequencies_2021 <- tibble(speech = speech_2021) %>%
 frequencies_2021
 ```
 
-Quitamos las *stopwords* y recalculamos las frecuencias.
+We remove the *stopwords* and recalculate the frequencies.
 
 ```{r 3_cleaning1|second_frequencies_2021_2020, message=FALSE}
 frequencies_2021 <- frequencies_2021 %>% 
@@ -177,9 +178,9 @@ head(frequencies_2021)
 ```
 
 
-### Discurso 2020 (Gestión 2019)
+### Speech 2020 (Management 2019)
 
-Comenzamos eliminando las expresiones regulares para el Discurso 2020 y haciendo algunas correcciones.
+We start dropping regular expressions from Speech 2020 and making some corrections.
 
 ```{r 3_cleaning2|regular_expressions_2020_2019}
 speech_2020 <- speech_2020 %>%
@@ -263,7 +264,7 @@ speech_2020_modif2 <- speech_2020 %>%
 diffChr(speech_2020_modif1, speech_2020_modif2, mode="sidebyside")
 ```
 
-Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
+We turn the speech into a dataframe, separate its words and calculate its frequencies.
 
 ```{r 3_cleaning2|first_frequencies_2020_2019}
 frequencies_2020 <- tibble(speech = speech_2020) %>% 
@@ -272,7 +273,7 @@ frequencies_2020 <- tibble(speech = speech_2020) %>%
 frequencies_2020
 ```
 
-Quitamos las *stopwords* y recalculamos las frecuencias.
+We remove the *stopwords* and recalculate the frequencies.
 
 ```{r 3_cleaning2|second_frequencies_2020_2019, message=FALSE}
 frequencies_2020 <- frequencies_2020 %>% 
@@ -282,9 +283,9 @@ frequencies_2020 <- frequencies_2020 %>%
 head(frequencies_2020)
 ```
 
-### Discurso 2019 (Gestión 2018)
+### Speech 2019 (Management 2018)
 
-Comenzamos eliminando las expresiones regulares para el Discurso 2019 y haciendo algunas correcciones.
+We start dropping regular expressions from Speech 2019 and making some corrections.
 
 ```{r 3_cleaning3|regular_expressions_2019_2018}
 speech_2019 <- speech_2019 %>% 
@@ -353,7 +354,7 @@ speech_2019_modif2 <- speech_2019 %>%
 diffChr(speech_2019_modif1, speech_2019_modif2, mode="sidebyside")
 ```
 
-Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
+We turn the speech into a dataframe, separate its words and calculate its frequencies.
 
 ```{r 3_cleaning3|first_frequencies_2019_2018}
 frequencies_2019 <- tibble(speech = speech_2019) %>% 
@@ -362,7 +363,7 @@ frequencies_2019 <- tibble(speech = speech_2019) %>%
 frequencies_2019
 ```
 
-Quitamos las *stopwords* y recalculamos las frecuencias.
+We remove the *stopwords* and recalculate the frequencies.
 
 ```{r 3_cleaning3|second_frequencies_2019_2018, message=FALSE}
 frequencies_2019 <- frequencies_2019 %>% 
@@ -372,9 +373,9 @@ frequencies_2019 <- frequencies_2019 %>%
 head(frequencies_2019)
 ```
 
-### Discurso 2018 (Gestión 2017)
+### Speech 2018 (Management 2017)
 
-Comenzamos eliminando las expresiones regulares para el Discurso 2018 y haciendo algunas correcciones.
+We start dropping regular expressions from Speech 2018 and making some corrections.
 
 ```{r 3_cleaning4|regular_expressions_2018_2017}
 speech_2018 <- speech_2018 %>% 
@@ -419,7 +420,7 @@ speech_2018_modif2 <- speech_2018 %>%
 diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 ```
 
-Convertimos el discurso en un dataframe, separamos sus palabras y calculamos sus frecuencias.
+We turn the speech into a dataframe, separate its words and calculate its frequencies.
 
 ```{r 3_cleaning4|first_frequencies_2018_2017}
 frequencies_2018 <- tibble(speech = speech_2018) %>% 
@@ -428,7 +429,7 @@ frequencies_2018 <- tibble(speech = speech_2018) %>%
 frequencies_2018
 ```
 
-Quitamos las *stopwords* y recalculamos las frecuencias.
+We remove the *stopwords* and recalculate the frequencies.
 
 ```{r 3_cleaning4|second_frequencies_2018_2017, message=FALSE}
 frequencies_2018 <- frequencies_2018 %>% 
@@ -438,84 +439,148 @@ frequencies_2018 <- frequencies_2018 %>%
 head(frequencies_2018)
 ```
 
-# Análisis por palabra
 
-Primero calculamos y graficamos las palabras más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF.  Este análisis permite determinar la relevancia de una palabra para un documento respecto de un conjunto de documentos.  Permite responder a la pregunta ¿qué conceptos de una palabra resaltan en un discurso respecto del resto?
+# One-word Analysis
 
-## Frecuencias
+First, we calculate and plot the most frequent words in each speech to subsequently perform a TF-IDF analysis. This analysis allows to determine the relevance of a word in a document regarding a set of documents.  It allows to answer the question: What concepts of one word stand out in a speech regarding the rest of the speeches?
 
-Graficamos las palabras más frecuentes de cada discurso.
+
+## Frequencies
+
+```{r _translate|reduce_df}
+frequencies_2021_en <- frequencies_2021 %>% 
+  slice_head(n = 10) 
+frequencies_2020_en <- frequencies_2020 %>% 
+  slice_head(n = 10) 
+frequencies_2019_en <- frequencies_2019 %>% 
+  slice_head(n = 10) 
+frequencies_2018_en <- frequencies_2018 %>% 
+  slice_head(n = 10) 
+```
+
+```{r _translate|freq_one-word_translation, message=FALSE}
+googleLanguageR::gl_auth(Sys.getenv("GL_AUTH"))
+
+frequencies_2021_en <- frequencies_2021_en %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "Health", "health")) %>% 
+  mutate(word = replace(word, word == "developing", "development"))
+
+frequencies_2020_en <- frequencies_2020_en %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n)  %>% 
+  mutate(word = replace(word, word == "internal", "inmates")) %>% 
+  mutate(word = replace(word, word == "Rights", "rights")) 
+
+frequencies_2019_en <- frequencies_2019_en %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n)%>% 
+  mutate(word = replace(word, word == "worked", "work")) %>% 
+  mutate(word = replace(word, word == "officials", "employees")) %>% 
+  mutate(word = replace(word, word == "Program", "program")) %>% 
+  mutate(word = replace(word, word == "establishments", "facilities"))
+
+frequencies_2018_en <- frequencies_2018_en %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "Program", "program")) %>% 
+  mutate(word = replace(word, word == "establishments", "facilities")) %>% 
+  mutate(word = replace(word, word == "worked", "work"))
+```
+
+We plot the most frequent words from each speech.
 
 ```{r 4_one-word_analysis|frequencies}
-pic_2021 <- frequencies_2021 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+pic_2021 <- frequencies_2021_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#dbb012") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2021") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2021") +
   theme(plot.title = element_text(hjust = 0.5))
 
-pic_2020 <- frequencies_2020 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+pic_2020 <- frequencies_2020_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#619cff") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2020") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2020") +
   theme(plot.title = element_text(hjust = 0.5))
 
-pic_2019 <- frequencies_2019 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+pic_2019 <- frequencies_2019_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#00ba38") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2019") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2019") +
   theme(plot.title = element_text(hjust = 0.5))
 
-pic_2018 <- frequencies_2018 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+pic_2018 <- frequencies_2018_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#f8766d") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2018") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2018") +
   theme(plot.title = element_text(hjust = 0.5))
 
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021)
 ```
 
 ```{r 4_one-word_analysis|frequencies_fig, include=FALSE}
-png("../figs/one-word_frequencies_es.png", width = 1344, height = 960)
+png("../figs/one-word_frequencies_en.png", width = 1344, height = 960)
 (pic_2018 + pic_2019) / (pic_2020 + pic_2021) 
 dev.off()
 ```
 
 
-## Análisis TF-IDF
+## TF-IDF Analysis
 
-Unimos las frecuencias en un solo data frame, identificando palabras y frecuencias con sus respectivos discursos.
+We join the frequencies in a single dataframe, identifying words and frequencies with their respective speeches.
 
 ```{r 4_one-word_analysis|TF-IDF-one_data_frame}
 frequencies_2021 <- frequencies_2021 %>% 
-  mutate(discurso = "C.P.P. 2021", .before = palabra) 
+  mutate(discurso = "P.P.A. 2021", .before = palabra) 
 frequencies_2020 <- frequencies_2020 %>% 
-  mutate(discurso = "C.P.P. 2020", .before = palabra) 
+  mutate(discurso = "P.P.A. 2020", .before = palabra) 
 frequencies_2019 <- frequencies_2019 %>% 
-  mutate(discurso = "C.P.P. 2019", .before = palabra) 
+  mutate(discurso = "P.P.A. 2019", .before = palabra) 
 frequencies_2018 <- frequencies_2018 %>% 
-  mutate(discurso = "C.P.P. 2018", .before = palabra) 
+  mutate(discurso = "P.P.A. 2018", .before = palabra) 
 
 messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020, frequencies_2021)
 head(messages)
 ```
 
-Luego, calculamos las frecuencias inversas de las palabras.
+Then, we calculate the reverse frequencies of words.
 
 ```{r 4_one-word_analysis|TF-IDF_inverse_document_frequency}
 messages_tfidf <- bind_tf_idf(messages, 
@@ -523,48 +588,59 @@ messages_tfidf <- bind_tf_idf(messages,
                               document = discurso,
                               n = n)
 head(messages_tfidf) 
+
 ```
 
-Y comparamos gráficamente.
+And we compare graphically.
 
-```{r 4_one-word_analysis|TF-IDF_plotting_TF-IDF, message=FALSE}
-one_word_plot <-
-  messages_tfidf %>%
-    group_by(discurso) %>%
-    top_n(5) %>%
-    ungroup %>%
-    mutate(discurso = as.factor(discurso),
-           palabra = reorder_within(palabra, tf_idf, discurso)) %>%
-    ggplot(aes(palabra, tf_idf, fill = discurso)) +
+```{r _translate|TF-IDF_one-word_plotting_translated, message=FALSE}
+one_word_plot_en <- messages_tfidf %>%
+  group_by(discurso) %>%
+  top_n(5) %>% 
+  mutate(
+    word = gl_translate(
+      palabra,
+      target = "en",
+      format = "text",
+      source = "es")$translatedText
+    ) %>% 
+  select(-palabra) %>% 
+  ungroup %>%
+  mutate(word = replace(word, word == "establishments", "facilities")) %>% 
+  mutate(word = replace(word, word == "means", "resources")) %>% 
+  mutate(word = replace(word, word == "estates", "establishments")) %>% 
+  mutate(word = replace(word, word == "expenses", "outgoing")) %>% 
+  mutate(discurso = as.factor(discurso),
+         word = reorder_within(word, tf_idf, discurso)
+         ) %>%
+    ggplot(aes(word, tf_idf, fill = discurso)) +
     geom_col(show.legend = FALSE) +
     facet_wrap(~discurso, scales = "free_y") +
     coord_flip() +
     scale_x_reordered() +
     scale_y_continuous(expand = c(0,0)) +
     labs(y = "tf-idf", x = NULL)
-one_word_plot
+one_word_plot_en
 ```
 
 ```{r 4_one-word_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/one-word_tf-idf_es.png", width = 1344, height = 960)
-one_word_plot
+png("../figs/one-word_tf-idf_en.png", width = 1344, height = 960)
+one_word_plot_en
 dev.off()
 ```
 
-En el discurso de la Cuenta Pública Participativa (C.P.P.) 2018 se dio énfasis a la actividad, capacitación y colocación *laboral*, y a aquellos *penados* que han sido intervenidos.  Asimismo, se rindió cuenta de *recursos* ejecutados durante el 2017, financiados por Ley de Presupuesto.  También se menciona la política de protección de *armamento* en las unidades especiales.
+In the speech of the Participatory Public Account (P.P.A.) 2018, work, training and *labor* placement, and those *convicts* that have been intervened was emphasized. Likewise, it was given accounts about *resources* executed during 2017, financed by Law of Budget. *Armament* protection policy is also mentioned in special units.
 
-Durante el 2019, el discurso de la C.P.P. se enfocó en destacar los programas de intervención, capacitación y colocación *laboral*, así como también las actividades *laborales* realizadas al interior de los *establecimientos* penitenciarios durante el 2018.  De la misma forma, se dio énfasis a la *vigilancia* de las personas privadas de libertad, a la adopción de normas y buenas prácticas ajustadas a derecho *internacional* y cumplimiento de compromisos con organismos *internacionales*.
+During 2019, the P.P.A. Speech focused on highlighting the intervention, training and *labor* placement programs, as well as the *labor* activities carried out within the prison *facilities* during 2018. In the same way, the *surveillance* of persons deprived of liberty, the adoption of norms and good practices adjusted to *international* law and compliance with commitments with *international* organizations were emphasized.
 
-Vemos que el término *contagios* y *covid* se tomó la atención del discurso 2020, lo cual tiene mucho sentido en atención a la emergencia *sanitaria* de pandemia que comenzó en dicho año.  Por otro lado, se informa sobre la publicación de un estudio de reincidencia que consideró *egresos* de privados de libertad en el año 2016.  Además, se puso atención a la gran cantidad de detenidos durante el 2019 que fueron recibidos con *lesiones* evidentes desde las instituciones policiales, para lo cual se aprobaron protocolos de constatación de estado de salud.
+We see that the words *infections* and *covid* took the attention of Speech 2020, which makes a lot of sense in attention to the *sanitary* emergency of pandemic that began in that year. On the other hand, it is reported the publication of a recidivism study that considered *outgoing* persons deprived of liberty in 2016. In addition, attention was paid to the large number of detainees during 2019 that were received with obvious *injuries* from police institutions, for which protocols to check health status were approved.
 
-Por último, el discurso del 2021 de la C.P.P. enfatizó dos grandes temáticas.  La primera, relacionada con la salud *mental* y la derivación de posibles *pacientes* privados de libertad con necesidades de atención *clínica* psicológica en el ámbito de la *psicoterapia* individual.  Esto, en atención especialmente a que durante el 2020 se mantuvo el riesgo sanitario de pandemia.  El segundo tópico abordó el desarrollo de una Cuenta Pública *Participativa* con mayor inclusión social y con transmisión vía streaming por segundo año consecutivo.
+Finally, the 2021 speech of the P.P.A. emphasized two major themes. The first, related to *mental* health and the derivation of possible *patients* deprived of liberty with needs for psychological *clinical* care in the field of individual *psychotherapy.* This, especially that during 2020 the health risk of pandemic was maintained. The second topic addressed the development of a *Participatory* Public Account with greater social inclusion and with transmission via streaming for the second consecutive year.
 
 
-# Análisis por bigramas
+# Bigram Analysis
 
-Calculamos y graficamos los bigramas más frecuentes en cada discurso para, posteriormente, realizar un análisis TF-IDF.  Este análisis permite determinar la relevancia de cada bigrama un documento respecto de un conjunto de documentos. 
-
-Definimos algunas *stopwords* para descartar adicionalmente a las ya definidas, realizamos algunas correcciones adicionales y calculamos la frecuencia de los bigramas para cada documento.
+Let's define some *stopwords* to additionally discard with those already defined.  We make some additional corrections and calculate the frequency of the bigrams for each document.
 
 ```{r 5_two-words_analysis|more_stopwords}
 bi_stopwords <- tibble(palabra = c("cuenta", "cuentas", "deberán", "realizar", "diferentes")) 
@@ -675,7 +751,7 @@ diffChr(speech_2018_modif1, speech_2018_modif2, mode="sidebyside")
 ```
 
 
-## Frecuencias
+## Frequencies
 
 ```{r 5_two-words_analysis|bigram_frequencies_2021-2020}
 bigram_2021 <- speech_2021 %>% 
@@ -769,80 +845,136 @@ bigram_2018 <- speech_2018 %>%
 head(bigram_2018)
 ```
 
-Y graficamos los bigramas más frecuentes.
+```{r _translate|freq_two-word_translation, message=FALSE}
+bigram_2021_en <- bigram_2021 %>% 
+  slice_head(n = 10) %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "penitentiary establishments", "penitentiary facilities")) %>% 
+  mutate(word = replace(word, word == "Budget Execution", "budget execution")) %>% 
+  mutate(word = replace(word, word == "Psychological attention", "psychological attention")) 
+
+bigram_2020_en <- bigram_2020 %>% 
+  slice_head(n = 10) %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "penitentiary establishments", "penitentiary facilities")) %>% 
+  mutate(word = replace(word, word == "Physical spaces", "physical spaces")) %>% 
+  mutate(word = replace(word, word == "Nacional level", "national level")) 
+
+bigram_2019_en <- bigram_2019 %>% 
+  slice_head(n = 10) %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "penitentiary establishments", "penitentiary facilities")) %>% 
+  mutate(word = replace(word, word == "regional addresses", "regional managements")) %>% 
+  mutate(word = replace(word, word == "Nacional level", "national level")) 
+
+bigram_2018_en <- bigram_2018 %>% 
+  slice_head(n = 10) %>% 
+  mutate(
+    word = gl_translate(
+      palabra, 
+      target = "en", 
+      format = "text", 
+      source = "es")$translatedText
+    ) %>% 
+  select(word, n) %>% 
+  mutate(word = replace(word, word == "penitentiary establishments", "penitentiary facilities")) %>% 
+  mutate(word = replace(word, word == "Nacional level", "national level")) %>% 
+  mutate(word = replace(word, word == "prison system", "penitentiary system")) 
+
+```
+
+
+We plot the most frequent bigrams.
 
 ```{r 5_two-words_analysis|bigram_frequencies}
 
-fig_2021 <- bigram_2021 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+fig_2021 <- bigram_2021_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#dbb012") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2021") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2021") +
   theme(plot.title = element_text(hjust = 0.5))
 
-fig_2020 <- bigram_2020 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+fig_2020 <- bigram_2020_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#619cff") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2020") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2020") +
   theme(plot.title = element_text(hjust = 0.5))
 
-fig_2019 <- bigram_2019 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+fig_2019 <- bigram_2019_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#00ba38") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2019") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2019") +
   theme(plot.title = element_text(hjust = 0.5))
 
-fig_2018 <- bigram_2018 %>% 
-  slice_head(n = 10) %>% 
-  ggplot(aes(y = reorder(palabra, n), n)) +
+fig_2018 <- bigram_2018_en %>% 
+  ggplot(aes(y = reorder(word, n), n)) +
   geom_col(fill = "#f8766d") +
   geom_text(aes(label = n), size = 3, hjust = 0.2) +
   theme_minimal() +
-  labs(y = NULL, x = "frecuencia") +
-  ggtitle("Discurso 2018") +
+  labs(y = NULL, x = "frequency") +
+  ggtitle("Speech 2018") +
   theme(plot.title = element_text(hjust = 0.5))
 
 (fig_2018 + fig_2019) / (fig_2020 + fig_2021)
 ```
 
 ```{r 5_two-words_analysis|frequencies_fig, include=FALSE}
-png("../figs/two-words_frequencies_es.png", width = 1344, height = 960)
+png("../figs/two-words_frequencies_en.png", width = 1344, height = 960)
 (fig_2018 + fig_2019) / (fig_2020 + fig_2021)
 dev.off()
 ```
 
 
-## Análisis TF-IDF
+## TF-IDF Analysis
 
-Juntamos las frecuencias de los bigramas en un solo data frame, identificando a qué discurso pertenece.
+We join the frequencies in a single dataframe, identifying words and frequencies with their respective speeches.
 
 ```{r 5_two-words_analysis|TF-IDF-one_data_frame}
 
 frequencies_2021 <- bigram_2021 %>% 
-  mutate(discurso = "C.P.P. 2021", .before = palabra) 
+  mutate(discurso = "P.P.A. 2021", .before = palabra) 
 frequencies_2020 <- bigram_2020 %>% 
-  mutate(discurso = "C.P.P. 2020", .before = palabra) 
+  mutate(discurso = "P.P.A. 2020", .before = palabra) 
 frequencies_2019 <- bigram_2019 %>% 
-  mutate(discurso = "C.P.P. 2019", .before = palabra) 
+  mutate(discurso = "P.P.A. 2019", .before = palabra) 
 frequencies_2018 <- bigram_2018 %>% 
-  mutate(discurso = "C.P.P. 2018", .before = palabra) 
+  mutate(discurso = "P.P.A. 2018", .before = palabra) 
 
 messages <- bind_rows(frequencies_2018, frequencies_2019, frequencies_2020, frequencies_2021)
 head(messages)
 ```
 
-Calculamos las frecuencias inversas de los bigramas.
+Then, we calculate the reverse frequencies of words.
 
 ```{r 5_two-words_analysis|TF-IDF_inverse_document_frequency}
 messages_tfidf <- bind_tf_idf(messages, 
@@ -852,38 +984,51 @@ messages_tfidf <- bind_tf_idf(messages,
 head(messages_tfidf) 
 ```
 
-Y hacemos la comparación gráfica.
+And we compare graphically.
 
 ```{r 5_two-words_analysis|TF-IDF_plotting_TF-IDF, message=FALSE}
-two_words_plot <-
-  messages_tfidf %>%
-    group_by(discurso) %>%
-    top_n(5) %>%
-    ungroup %>%
-    mutate(discurso = as.factor(discurso),
-           palabra = reorder_within(palabra, tf_idf, discurso)) %>%
-    ggplot(aes(palabra, tf_idf, fill = discurso)) +
-    geom_col(show.legend = FALSE) +
-    facet_wrap(~discurso, scales = "free_y") +
-    coord_flip() +
-    scale_x_reordered() +
-    scale_y_continuous(expand = c(0,0)) +
-    labs(y = "tf-idf", x = NULL)
-two_words_plot
+two_words_plot_en <- messages_tfidf %>%
+  group_by(discurso) %>%
+  top_n(5) %>%
+  mutate(
+    word = gl_translate(
+      palabra,
+      target = "en",
+      format = "text",
+      source = "es")$translatedText
+    ) %>% 
+  select(-palabra) %>% 
+  ungroup %>%
+  mutate(word = replace(word, word == "Higher cost", "higher cost")) %>%
+  mutate(word = replace(word, word == "regional addresses", "regional managements")) %>%
+  mutate(word = replace(word, word == "Physical spaces", "physical spaces")) %>%
+  mutate(word = replace(word, word == "executive Summary", "executive summary")) %>%
+  mutate(discurso = as.factor(discurso),
+         word = reorder_within(word, tf_idf, discurso)) %>%
+  ggplot(aes(word, tf_idf, fill = discurso)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~discurso, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  scale_y_continuous(expand = c(0,0)) +
+  labs(y = "tf-idf", x = NULL)
+two_words_plot_en
 ```
 
 ```{r 5_two-words_analysis|TF-IDF_plotting_fig, include=FALSE}
-png("../figs/two-words_tf-idf_es.png", width = 1344, height = 960)
-two_words_plot
+png("../figs/two-words_tf-idf_en.png", width = 1344, height = 960)
+two_words_plot_en
 dev.off()
 ```
 
-El discurso de la Cuenta Pública Participativa (C.P.P.) del año 2018 destacó la ejecución de actividades mediante *convenios suscritos* en 2017 con diversas entidades públicas, corporaciones, fundaciones y universidades, tanto a nivel central como regional, gestionadas e implementadas por las distintas *unidades técnicas* regionales y de los establecimientos penitenciarios.  Durante este año se desarrollaron *allanamientos simultáneos* en diversas regiones, permitiendo incautar variadas especies ilícitas y prohibidas.
+The speech of the Participatory Public Account (P.P.A.) of the year 2018 highlighted the execution of activities through *signed agreements* in 2017 with various public entities, corporations, foundations and universities, both at the central and regional level, managed and implemented by the different regional *technical units* and of penitentiary facilities. During this year, *simultaneous raids* were developed in various regions, allowing to seize various illicit and prohibited species.
 
-En el discurso del 2019, se enfatizó la coordinación de las *direcciones regionales* con las unidades de los subsistemas cerrado, abierto y postpenitenciario, con el fin de realizar actividades conjuntas para la vinculación público-privada.  Otras de las actividades realizadas en 2018 estuvieron en el ámbito de los *Derechos Humanos* a través de capacitación a funcionarios y actualización de resoluciones y actos administrativos.  También hubo ejecución de proyectos para implementar, ampliar, reponer y mantener equipos de *seguridad electrónica*, con el objetivo de complementar la vigilancia perimetral humana.
+In the 2019 speech, the coordination of *Regional Offices* with the units of the closed, opened and postpenitentiary subsystems was emphasized, in order to carry out joint activities for public-private links. Other activities in 2018 were executed in the field of *Human Rights* through training for officials and updating resolutions and administrative acts. There were also execution of projects to implement, expand, replace and maintain *electronic security* equipment, with the aim of complementing human perimeter surveillance.
 
-El análisis de bigramas destaca nuevamente que el discurso de la C.P.P. 2020 se centró en la situación pandémica por *covid 19* y en algunas de las acciones tomadas a consecuencia de ella, tales como la implementación de salas para *visitas virtuales*, permitir el uso limitado de *teléfonos móviles* para la comunicación de los internos con sus familiares y la reubicación de internos para disminuir la probabilidad de contagios por falta de *espacios físicos* y su sanitización.
+The bigram analysis stands out again that the P.P.A. Speech of the year 2020 focused on the pandemic situation by *covid 19* and in some actions taken as a result of it, such as the implementation of rooms for *virtual visits*, allow the limited use of *mobile phones* for the communication of inmates with their relatives, and relocation of inmates to reduce the probability of infections due to lack of *physical spaces* and their disinfection.
 
-Finalmente, en el discurso del 2021 se abordaron las actividades realizadas en 2020 de *atención clínica* y derivación de pacientes por *salud mental* en contexto de pandemia.  Por otro lado, se destacó la participación de la ciudadanía en la estructura y contenido del *resumen ejecutivo* de la C.P.P., y su disponibilidad para descargar desde la *web institucional*.  También se respondió una consulta ciudadana sobre el programa *Abriendo Caminos* del Ministerio de Desarrollo Social.
+Lastly, the 2021 speech addressed the activities carried out in 2020 related to *clinical care* and the derivation of patients with *mental health* issues in pandemic context. On the other hand, it was highlighted the participation of citizens in the structure and content of the P.P.A. *Executive Summary* and its availability to download from the *institutional website*. A citizen consultation was also answered about the *Opening Roads* program from the Ministry of Social Development.
+
+
 
 
