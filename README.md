@@ -16,6 +16,6 @@ Gendarmerie de Chile is a Public Service, under the Ministry of Justice and Huma
 
 ### Reports
 
-Access to the Executive Report: [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (english version), [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (spanish version)
+Access to the Executive Report: [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (english version in pdf format), [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (spanish version in pdf format)
 
-Access to the Technical Report: [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (english version), [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (spanish version)
+Access to the Technical Report: [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (english version in html format), [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (spanish version in htmal format)
