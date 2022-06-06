@@ -4,7 +4,7 @@
 
 ### Autores: Fabián Álvarez / Roberto Rodríguez - Actualizado por: Fabián Álvarez
 
-### Primera versión: 09-11-2020 - Última Actualización: 25/05/2022
+### Primera versión: 09/11/2020 - Última Actualización: 25/05/2022
 
 Las Cuentas Públicas Participativas son mecanismos de diálogo abierto que vinculan a las autoridades de los órganos de la Administración del Estado con la ciudadanía y tienen como objetivo informar sobre la gestión de políticas públicas realizadas, generar un proceso de retroalimentación que permita recoger las inquietudes y aportes de quienes participen de éstas y dar respuesta organizada en plazos oportunos a las inquietudes surgidas en el proceso.
 
@@ -16,7 +16,7 @@ Gendarmería de Chile es un Servicio Público, dependiente del Ministerio de Jus
 
 ### Informes
 
-Para acceder al Informe Ejecutivo: [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (versión en español en formato pdf), [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (versión en inglés en formato pdf).
+Para acceder al Informe Ejecutivo en formato pdf: [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (versión en español en formato pdf), [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (versión en inglés en formato pdf).
 
-Para aceeder al Informe Técnico: [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (versión en español en formato html), [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (versión en inglés en formato html).
+Para aceeder al Informe Técnico en formato html: [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (versión en español), [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (versión en inglés).
 

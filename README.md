@@ -4,7 +4,7 @@
 
 ### Authors: Fabián Álvarez / Roberto Rodríguez - Updated by: Fabián Álvarez
 
-### 1st version: 09-11-2020 - Last Update: 25/05/2022
+### 1st version: 09/11/2020 - Last Update: 25/05/2022
 
 The Participatory Public Accounts (P.P.A.) are open dialogue mechanisms that link the authorities of the State Administration bodies with citizenship and aim to inform about the management of public policies carried out, generate a feedback process that allows collecting the concerns and contributions of its participants and give an organized response to consultations arising in the process.
 
@@ -16,6 +16,6 @@ Gendarmerie de Chile is a Public Service, under the Ministry of Justice and Huma
 
 ### Reports
 
-Access to the Executive Report: [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (english version in pdf format), [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (spanish version in pdf format).
+Access to the Executive Report in pdf format: [Executive Report](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_en.pdf) (english version), [Informe Ejecutivo](https://github.com/fa-alvarez/r-genchi-public-account/blob/main/output/executive-reports/genchi-executive-report_es.pdf) (spanish version).
 
-Access to the Technical Report: [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (english version in html format), [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (spanish version in html format).
+Access to the Technical Report in html format: [Technical Report](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_en.html) (english version), [Informe Técnico](https://htmlpreview.github.io/?https://raw.githubusercontent.com/fa-alvarez/r-genchi-public-account/main/output/technical-reports/genchi-technical-report_es.html) (spanish version).
