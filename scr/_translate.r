@@ -14,7 +14,7 @@ frequencies_2018_en <- frequencies_2018 %>%
 
 # One-word - Translation & corrections for frequencies --------------------
 
-oogleLanguageR::gl_auth(Sys.getenv("GL_AUTH"))
+googleLanguageR::gl_auth(Sys.getenv("GL_AUTH"))
 
 frequencies_2021_en <- frequencies_2021_en %>% 
   mutate(
